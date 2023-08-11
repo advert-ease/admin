@@ -128,7 +128,7 @@ function App() {
             console.log("NODE: " + snap.key + " DOES NOT EXIST, UPDATING");
             // db.ref()
             // .child("pi_name-cha/" + id)
-            update(db, ref("pi_name-cha/" + id), {
+            update(ref(db,"pi_name-cha/" + id), {
               URL: "10 Creative Commercial Ad 2022।.mp4",
               adid: {
                 0: "ad000",
