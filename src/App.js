@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useState } from "react";
 import "./App.css";
 import firebase from "./myfirebase";
@@ -13,6 +14,7 @@ import {
 
 function App() {
   const [data, setData] = useState([]);
+  const [dataDev, setDataDev] = useState([]);
   const [channel, setChannels] = useState([]);
   const [allChannels, setAllChannels] = useState([]);
   const [allAdds, setAllAdds] = useState([]);
@@ -20,14 +22,40 @@ function App() {
   const fetchData1 = () => {
     const db = getDatabase();
     const piRef = ref(db, "pi_name-cha/");
+    const devRef = ref(db,"devices/");
 
+   
+    
     onValue(piRef, (snapshot) => {
       const newData = [];
       // console.log(snapshot);
       snapshot.forEach((item) => {
-        let x, y, z;
+        let esp_lseen, dev_lseen, x, y, z;
         // console.log(child);
         const idvlRef = ref(db, "pi_name-cha/" + item.key);
+        
+        // console.log(item);
+        const iddevRef = ref(db, "devices/" + item.key);
+        const esptRef = ref(db,"esptime/" + item.key)
+
+        onValue(esptRef, (snap) => {
+          snap.forEach((doc) => {
+            if(doc.key === "last_seen"){
+              esp_lseen = doc.val();
+            }
+          });
+        });
+
+        onValue(iddevRef, (snap) => {
+          snap.forEach((doc) => {
+            if (doc.key === "last_seen") {
+              dev_lseen = doc.val();  
+            }
+            
+          });
+        });
+        
+        
         onValue(idvlRef, (snap) => {
           snap.forEach((doc) => {
             if (doc.key === "URL") {
@@ -41,9 +69,11 @@ function App() {
             }
           });
         });
-        newData.push({ name: item.key, ad: z, cha: x, rest: y });
+        newData.push({ name: item.key, ad: z, cha: x, rest: y, lastSeen: dev_lseen, espLastSeen: esp_lseen});
         setData(newData);
+        
       });
+      console.log(newData)
     });
     // setData(arr);
   };
@@ -169,9 +199,11 @@ function App() {
         <table>
           <tr>
             <th>Device</th>
-            <th>Restaurent</th>
+            <th>Restaurant</th>
             <th>Channel</th>
             <th>Ad</th>
+            <th>Lastseen-device</th>
+            <th>Lastseen-esp</th>
           </tr>
           {data.map((item, index) => {
             return (
@@ -198,6 +230,9 @@ function App() {
                     })}
                   </select>
                 </td>
+               
+                <td className="table-cell">{item.lastSeen}</td>
+                <td className="table-cell">{item.espLastSeen}</td>
               </tr>
             );
           })}
