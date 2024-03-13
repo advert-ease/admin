@@ -70,6 +70,7 @@ function App() {
             rest: y,
             lastSeen: dev_lseen,
             espLastSeen: esp_lseen,
+            pinned: false, // Initialize pinned state to false
           });
         });
         setData(newData);
@@ -305,25 +306,42 @@ function App() {
       });
     });
   };
+  const handlePinToggle = (item) => {
+    setData((prevData) => {
+      const newData = prevData.map((dataItem) => {
+        if (dataItem === item) {
+          return { ...dataItem, pinned: !dataItem.pinned };
+        }
+        return dataItem;
+      });
+      // Sort the data array based on the pinned status
+      newData.sort((a, b) => (a.pinned === b.pinned ? 0 : a.pinned ? -1 : 1));
+      return newData;
+    });
+  };
 
   return (
     <div className="App">
       <div className="div-1">
         <h1>DEVICE TABLE</h1>
         <table>
-          <tr>
-            <th>Device</th>
-            <th>Restaurant</th>
-            <th>Channel</th>
-            <th>Ad</th>
-            <th>Lastseen-device</th>
-            <th>Lastseen-ESP</th>
-            <th>Device State</th>
-            <th>Device State ESP</th>
-          </tr>
-          {data.map((item, index) => {
-            return (
-              <tr key={index} className="table-row" data-name={item.name}>
+          <tbody>
+            <tr>
+              <th>Device</th>
+              <th>Restaurant</th>
+              <th>Channel</th>
+              <th>Ad</th>
+              <th>Lastseen-device</th>
+              <th>Lastseen-ESP</th>
+              <th>Device State</th>
+              <th>Device State ESP</th>
+            </tr>
+            {data.map((item, index) => (
+              <tr
+                key={index}
+                className={`table-row ${item.pinned ? "pinned" : ""}`}
+                data-name={item.name}
+              >
                 <td className="table-cell">{item.name}</td>
                 <td className="table-cell">{item.rest}</td>
                 <td className="table-cell">
@@ -351,10 +369,16 @@ function App() {
                 <td className="table-cell">{item.espLastSeen}</td>
                 <td className="color-cell"></td>
                 <td className="color-cell-esp"></td>
+                <td className="pin-cell">
+                  <button onClick={() => handlePinToggle(item)}>
+                    {item.pinned ? "Unpin" : "Pin"}
+                  </button>
+                </td>
               </tr>
-            );
-          })}
+            ))}
+          </tbody>
         </table>
+        ;
       </div>
       <div className="register-div">
         <button onClick={handleRegister} className="register">
