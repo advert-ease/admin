@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import "./App.css";
 import firebase from "./myfirebase";
@@ -20,63 +20,65 @@ function App() {
   const [allAdds, setAllAdds] = useState([]);
 
   const fetchData1 = () => {
-    const db = getDatabase();
-    const piRef = ref(db, "pi_name-cha/");
-    const devRef = ref(db,"devices/");
+    return new Promise((resolve, reject) => {
+      const db = getDatabase();
+      const piRef = ref(db, "pi_name-cha/");
+      const devRef = ref(db, "devices/");
 
-   
-    
-    onValue(piRef, (snapshot) => {
       const newData = [];
-      // console.log(snapshot);
-      snapshot.forEach((item) => {
-        let esp_lseen, dev_lseen, x, y, z;
-        // console.log(child);
-        const idvlRef = ref(db, "pi_name-cha/" + item.key);
-        
-        // console.log(item);
-        const iddevRef = ref(db, "devices/" + item.key);
-        const esptRef = ref(db,"esptime/" + item.key)
 
-        onValue(esptRef, (snap) => {
-          snap.forEach((doc) => {
-            if(doc.key === "last_seen"){
-              esp_lseen = doc.val();
-            }
-          });
-        });
+      onValue(piRef, (snapshot) => {
+        snapshot.forEach((item) => {
+          let esp_lseen, dev_lseen, x, y, z;
+          const idvlRef = ref(db, "pi_name-cha/" + item.key);
+          const iddevRef = ref(db, "devices/" + item.key);
+          const esptRef = ref(db, "esptime/" + item.key);
 
-        onValue(iddevRef, (snap) => {
-          snap.forEach((doc) => {
-            if (doc.key === "last_seen") {
-              dev_lseen = doc.val();  
-            }
-            
+          onValue(esptRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "last_seen") {
+                esp_lseen = doc.val();
+              }
+            });
+          });
+
+          onValue(iddevRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "last_seen") {
+                dev_lseen = doc.val();
+              }
+            });
+          });
+
+          onValue(idvlRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "URL") {
+                z = doc.val();
+              }
+              if (doc.key === "channel") {
+                x = doc.val();
+              }
+              if (doc.key === "cust_id") {
+                y = doc.val();
+              }
+            });
+          });
+          newData.push({
+            name: item.key,
+            ad: z,
+            cha: x,
+            rest: y,
+            lastSeen: dev_lseen,
+            espLastSeen: esp_lseen,
           });
         });
-        
-        
-        onValue(idvlRef, (snap) => {
-          snap.forEach((doc) => {
-            if (doc.key === "URL") {
-              z = doc.val();
-            }
-            if (doc.key === "channel") {
-              x = doc.val();
-            }
-            if (doc.key === "cust_id") {
-              y = doc.val();
-            }
-          });
-        });
-        newData.push({ name: item.key, ad: z, cha: x, rest: y, lastSeen: dev_lseen, espLastSeen: esp_lseen});
         setData(newData);
-        
+        console.log(newData);
+        resolve(newData);
       });
-      console.log(newData)
     });
-    // setData(arr);
   };
+
   const fetchData2 = () => {
     const db = getDatabase();
     const chRef = ref(db, "pi_cha-status/");
@@ -100,6 +102,118 @@ function App() {
       });
     });
   };
+  useEffect(() => {
+    let previousData = {};
+    let sameDataDurations = {};
+    let sameDataDurationsESP = {};
+
+    const updateTableDevice = (itemName, color) => {
+      // Find the table row corresponding to the item name
+      const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
+
+      // If the table row exists, update the color of the last cell
+      if (tableRow) {
+        const lastCell = tableRow.querySelector(".color-cell");
+        console.log(lastCell);
+        if (lastCell) {
+          lastCell.style.backgroundColor = color;
+        }
+      }
+    };
+    const updateTableESP = (itemName, color) => {
+      // Find the table row corresponding to the item name
+      const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
+
+      // If the table row exists, update the color of the last cell
+      if (tableRow) {
+        const lastCell = tableRow.querySelector(".color-cell-esp");
+        console.log(lastCell);
+        if (lastCell) {
+          lastCell.style.backgroundColor = color;
+        }
+      }
+    };
+
+    const fetchDataInterval = setInterval(() => {
+      fetchData1()
+        .then((newData) => {
+          newData.forEach((newItem) => {
+            const prevItem = previousData[newItem.name];
+            console.log(newItem.lastSeen);
+            if (!prevItem || prevItem.lastSeen !== newItem.lastSeen) {
+              // Data changed, reset duration and log green
+              sameDataDurations[newItem.name] = 0;
+              console.log(
+                `%c${newItem.name} is initially fetched.`,
+                "color: green"
+              );
+              updateTableDevice(newItem.name, "green");
+            } else {
+              // Data remains the same, increment duration
+              sameDataDurations[newItem.name] += 5;
+
+              if (sameDataDurations[newItem.name] === 5) {
+                console.log(
+                  `%c${newItem.name} has remained the same for ${
+                    sameDataDurations[newItem.name]
+                  } seconds.`,
+                  "color: orange"
+                );
+                updateTableDevice(newItem.name, "orange");
+              } else if (sameDataDurations[newItem.name] >= 10) {
+                console.log(
+                  `%c${newItem.name} has remained the same for ${
+                    sameDataDurations[newItem.name]
+                  } seconds.`,
+                  "color: red"
+                );
+                updateTableDevice(newItem.name, "red");
+              }
+            }
+            if (!prevItem || prevItem.espLastSeen !== newItem.espLastSeen) {
+              // Data changed, reset duration and log green
+              sameDataDurationsESP[newItem.name] = 0;
+              console.log(
+                `%c${newItem.name} is initially fetched.`,
+                "color: green"
+              );
+              updateTableESP(newItem.name, "green");
+            } else {
+              // Data remains the same, increment duration
+              sameDataDurationsESP[newItem.name] += 5;
+
+              if (sameDataDurationsESP[newItem.name] === 5) {
+                console.log(
+                  `%c${newItem.name} has remained the same for ${
+                    sameDataDurationsESP[newItem.name]
+                  } seconds.`,
+                  "color: orange"
+                );
+                updateTableESP(newItem.name, "orange");
+              } else if (sameDataDurationsESP[newItem.name] >= 10) {
+                console.log(
+                  `%c${newItem.name} has remained the same for ${
+                    sameDataDurationsESP[newItem.name]
+                  } seconds.`,
+                  "color: red"
+                );
+                updateTableESP(newItem.name, "red");
+              }
+            }
+          });
+
+          previousData = newData.reduce((prev, current) => {
+            prev[current.name] = current;
+            return prev;
+          }, {});
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }, 5000);
+
+    return () => clearInterval(fetchDataInterval);
+  }, []);
 
   useEffect(() => {
     fetchData1();
@@ -158,7 +272,7 @@ function App() {
             console.log("NODE: " + snap.key + " DOES NOT EXIST, UPDATING");
             // db.ref()
             // .child("pi_name-cha/" + id)
-            update(ref(db,"pi_name-cha/" + id), {
+            update(ref(db, "pi_name-cha/" + id), {
               URL: "10 Creative Commercial Ad 2022।.mp4",
               adid: {
                 0: "ad000",
@@ -203,11 +317,13 @@ function App() {
             <th>Channel</th>
             <th>Ad</th>
             <th>Lastseen-device</th>
-            <th>Lastseen-esp</th>
+            <th>Lastseen-ESP</th>
+            <th>Device State</th>
+            <th>Device State ESP</th>
           </tr>
           {data.map((item, index) => {
             return (
-              <tr key={index} className="table-row">
+              <tr key={index} className="table-row" data-name={item.name}>
                 <td className="table-cell">{item.name}</td>
                 <td className="table-cell">{item.rest}</td>
                 <td className="table-cell">
@@ -215,9 +331,9 @@ function App() {
                     value={item.cha}
                     onChange={(e) => handleChangeChannel(item, e)}
                   >
-                    {channel.map((item) => {
-                      return <option>{item.name}</option>;
-                    })}
+                    {channel.map((channelItem, index) => (
+                      <option key={index}>{channelItem.name}</option>
+                    ))}
                   </select>
                 </td>
                 <td className="table-cell">
@@ -225,14 +341,16 @@ function App() {
                     value={item.ad}
                     onChange={(e) => handleChangeUrl(item, e)}
                   >
-                    {allAdds.map((item) => {
-                      return <option>{item}</option>;
-                    })}
+                    {allAdds.map((addItem, index) => (
+                      <option key={index}>{addItem}</option>
+                    ))}
                   </select>
                 </td>
-               
+
                 <td className="table-cell">{item.lastSeen}</td>
                 <td className="table-cell">{item.espLastSeen}</td>
+                <td className="color-cell"></td>
+                <td className="color-cell-esp"></td>
               </tr>
             );
           })}

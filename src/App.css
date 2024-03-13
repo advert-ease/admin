@@ -48,7 +48,22 @@ tr:nth-child(odd){
   cursor: pointer;
   padding:5% 20%;
 }
+.color-cell{
+  background-color: white;
+  border:2px solid black;
+  padding:1%;
+  text-align: center;
+  width: 200px;
+  
+}
 
+.color-cell-esp{
+  background-color: white;
+  border:2px solid black;
+  padding:1%;
+  text-align: center;
+  width: 200px;
+}
 .register{
   margin:5% 0 0 0;
   padding:1% 2%;
