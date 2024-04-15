@@ -317,7 +317,7 @@ function App() {
                 //   } seconds.`,
                 //   "color: pink"
                 // );
-                updateTableESP(newItem.name, "pink", newItem.espLastSeen);
+                updateTableESP(newItem.name, "orange", newItem.espLastSeen);
               } else if (sameDataDurationsESP[newItem.name] >= 15) {
                 // console.log(
                 //   `%c${newItem.name} has remained the same for ${
