@@ -16,15 +16,15 @@ const firebaseConfig = {
 };
 
 // const firebaseConfig = {
-//     apiKey: "AIzaSyBwCQeM7ITq_UYSWqLfywwx0i7AJSVQyDw",
-//     authDomain: "advert-test-01.firebaseapp.com",
-//     databaseURL: "https://advert-test-01-default-rtdb.firebaseio.com",
-//     projectId: "advert-test-01",
-//     storageBucket: "advert-test-01.appspot.com",
-//     messagingSenderId: "709936076143",
-//     appId: "1:709936076143:web:6482d5a9340b5e40ed449a",
-//     measurementId: "G-M6ZK61C4Z4"
-//   };
+//   apiKey: "AIzaSyBwCQeM7ITq_UYSWqLfywwx0i7AJSVQyDw",
+//   authDomain: "advert-test-01.firebaseapp.com",
+//   databaseURL: "https://advert-test-01-default-rtdb.firebaseio.com",
+//   projectId: "advert-test-01",
+//   storageBucket: "advert-test-01.appspot.com",
+//   messagingSenderId: "709936076143",
+//   appId: "1:709936076143:web:6482d5a9340b5e40ed449a",
+//   measurementId: "G-M6ZK61C4Z4",
+// };
 firebase.initializeApp(firebaseConfig);
 // const db = getDatabase(app)
 export default firebase;

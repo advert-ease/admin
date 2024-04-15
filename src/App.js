@@ -30,7 +30,7 @@ function App() {
 
       onValue(piRef, (snapshot) => {
         snapshot.forEach((item) => {
-          let esp_lseen, dev_lseen, x, y, z, statusDev, devRest;
+          let esp_lseen, dev_lseen, x, y, z, statusDev, devRest, switchChecked;
           const idvlRef = ref(db, "pi_name-cha/" + item.key);
           const iddevRef = ref(db, "devices/" + item.key);
           // console.log(iddevRef);
@@ -51,6 +51,7 @@ function App() {
               }
             });
           });
+
           onValue(iddevRef, (snap) => {
             snap.forEach((doc) => {
               if (doc.key === "restaurant") {
@@ -80,6 +81,13 @@ function App() {
               }
             });
           });
+          onValue(idvlRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "espctr") {
+                switchChecked = doc.val();
+              }
+            });
+          });
           newData.push({
             name: item.key,
             ad: z,
@@ -90,6 +98,7 @@ function App() {
             status: statusDev,
             pinned: false, // Initialize pinned state to false
             restaurantDev: devRest,
+            switchChecked: switchChecked,
           });
         });
         setData(newData);
@@ -133,7 +142,8 @@ function App() {
       color,
       devLastSeen,
       adName,
-      chaName
+      chaName,
+      switchChecked
     ) => {
       // Find the table row corresponding to the item name
       const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
@@ -144,12 +154,20 @@ function App() {
         const devTimeCell = tableRow.querySelector(".table-cell-dev");
         const adNameCell = tableRow.querySelector(".ad-name");
         const chaNameCell = tableRow.querySelector(".cha-name");
+        const switchESPCell = tableRow.querySelector(
+          ".switch-cell .switch-esp"
+        );
 
+        console.log(switchESPCell);
         if (lastCell) {
           devTimeCell.textContent = devLastSeen;
           lastCell.style.backgroundColor = color;
           adNameCell.value = adName;
           chaNameCell.value = chaName;
+          if (switchESPCell) {
+            console.log("hi");
+            switchESPCell.checked = switchChecked;
+          }
         }
       }
     };
@@ -184,7 +202,6 @@ function App() {
           });
           newData.forEach((newItem) => {
             const prevItem = previousData[newItem.name];
-
             if (!prevItem || prevItem.lastSeen !== newItem.lastSeen) {
               // Data changed, reset duration and log green
               sameDataDurations[newItem.name] = 0;
@@ -197,7 +214,8 @@ function App() {
                 "green",
                 newItem.lastSeen,
                 newItem.ad,
-                newItem.cha
+                newItem.cha,
+                newItem.switchChecked
               );
             } else {
               // Data remains the same, increment duration
@@ -215,9 +233,43 @@ function App() {
                   "orange",
                   newItem.lastSeen,
                   newItem.ad,
-                  newItem.cha
+                  newItem.cha,
+                  newItem.switchChecked
                 );
-              } else if (sameDataDurations[newItem.name] >= 10) {
+              } else if (sameDataDurations[newItem.name] === 10) {
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurations[newItem.name]
+                //   } seconds.`,
+                //   "color: pink"
+                // );
+                updateTableDevice(
+                  newItem.name,
+                  "orange",
+                  newItem.lastSeen,
+                  newItem.ad,
+                  newItem.cha,
+                  newItem.switchChecked
+                );
+                const db = getDatabase();
+                const itemRef = ref(db, "pi_name-cha/" + newItem.name);
+                update(itemRef, {
+                  espctr: false, // Update espctr to false
+                }).then(() => {
+                  // Once updated, set it back to true after a brief delay
+                  setTimeout(() => {
+                    update(itemRef, {
+                      espctr: true, // Set espctr back to true
+                    });
+                  }, 100); // Delay in milliseconds
+                });
+
+                // Log the channel change action
+                update(ref(db, "data_log/" + newItem.name), {
+                  changed_by: "admin",
+                  action: `restarted device ${newItem.name}`,
+                });
+              } else if (sameDataDurations[newItem.name] >= 15) {
                 // console.log(
                 //   `%c${newItem.name} has remained the same for ${
                 //     sameDataDurations[newItem.name]
@@ -229,10 +281,12 @@ function App() {
                   "red",
                   newItem.lastSeen,
                   newItem.ad,
-                  newItem.cha
+                  newItem.cha,
+                  newItem.switchChecked
                 );
               }
             }
+
             if (!prevItem || prevItem.espLastSeen !== newItem.espLastSeen) {
               // Data changed, reset duration and log green
               sameDataDurationsESP[newItem.name] = 0;
@@ -253,7 +307,18 @@ function App() {
                 //   "color: orange"
                 // );
                 updateTableESP(newItem.name, "orange", newItem.espLastSeen);
-              } else if (sameDataDurationsESP[newItem.name] >= 10) {
+              } else if (
+                sameDataDurationsESP[newItem.name] >= 10 &&
+                sameDataDurationsESP[newItem.name] < 15
+              ) {
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurationsESP[newItem.name]
+                //   } seconds.`,
+                //   "color: pink"
+                // );
+                updateTableESP(newItem.name, "pink", newItem.espLastSeen);
+              } else if (sameDataDurationsESP[newItem.name] >= 15) {
                 // console.log(
                 //   `%c${newItem.name} has remained the same for ${
                 //     sameDataDurationsESP[newItem.name]
@@ -273,7 +338,7 @@ function App() {
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
-    }, 5000);
+    }, 300000);
 
     return () => clearInterval(fetchDataInterval);
   }, []);
@@ -504,6 +569,7 @@ function App() {
                         handleSwitchToggle(item.name, e.target.checked)
                       }
                       disabled={loading}
+                      className="switch-esp"
                     />
                     <span className="slider round"></span>
                   </label>
