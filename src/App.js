@@ -273,7 +273,7 @@ function App() {
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
-    }, 20000);
+    }, 5000);
 
     return () => clearInterval(fetchDataInterval);
   }, []);
