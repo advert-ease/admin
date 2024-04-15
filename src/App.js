@@ -10,6 +10,7 @@ import {
   set,
   orderByKey,
   query,
+  get,
 } from "firebase/database";
 
 function App() {
@@ -29,9 +30,10 @@ function App() {
 
       onValue(piRef, (snapshot) => {
         snapshot.forEach((item) => {
-          let esp_lseen, dev_lseen, x, y, z;
+          let esp_lseen, dev_lseen, x, y, z, statusDev, devRest;
           const idvlRef = ref(db, "pi_name-cha/" + item.key);
           const iddevRef = ref(db, "devices/" + item.key);
+          // console.log(iddevRef);
           const esptRef = ref(db, "esptime/" + item.key);
 
           onValue(esptRef, (snap) => {
@@ -46,6 +48,21 @@ function App() {
             snap.forEach((doc) => {
               if (doc.key === "last_seen") {
                 dev_lseen = doc.val();
+              }
+            });
+          });
+          onValue(iddevRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "restaurant") {
+                devRest = doc.val();
+              }
+            });
+          });
+
+          onValue(iddevRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "status") {
+                statusDev = doc.val();
               }
             });
           });
@@ -70,7 +87,9 @@ function App() {
             rest: y,
             lastSeen: dev_lseen,
             espLastSeen: esp_lseen,
+            status: statusDev,
             pinned: false, // Initialize pinned state to false
+            restaurantDev: devRest,
           });
         });
         setData(newData);
@@ -99,6 +118,7 @@ function App() {
       snapshot.forEach((item) => {
         newAd.push(item.val());
         setAllAdds(newAd);
+        console.log(allAdds);
         // setAllAdds((i) => [...i, item.val()]);
       });
     });
@@ -108,28 +128,42 @@ function App() {
     let sameDataDurations = {};
     let sameDataDurationsESP = {};
 
-    const updateTableDevice = (itemName, color) => {
+    const updateTableDevice = (
+      itemName,
+      color,
+      devLastSeen,
+      adName,
+      chaName
+    ) => {
       // Find the table row corresponding to the item name
       const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
 
       // If the table row exists, update the color of the last cell
       if (tableRow) {
         const lastCell = tableRow.querySelector(".color-cell");
-        console.log(lastCell);
+        const devTimeCell = tableRow.querySelector(".table-cell-dev");
+        const adNameCell = tableRow.querySelector(".ad-name");
+        const chaNameCell = tableRow.querySelector(".cha-name");
+
         if (lastCell) {
+          devTimeCell.textContent = devLastSeen;
           lastCell.style.backgroundColor = color;
+          adNameCell.value = adName;
+          chaNameCell.value = chaName;
         }
       }
     };
-    const updateTableESP = (itemName, color) => {
+    const updateTableESP = (itemName, color, espTime) => {
       // Find the table row corresponding to the item name
       const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
 
       // If the table row exists, update the color of the last cell
       if (tableRow) {
+        const espTimeCell = tableRow.querySelector(".table-cell-esp");
         const lastCell = tableRow.querySelector(".color-cell-esp");
-        console.log(lastCell);
+
         if (lastCell) {
+          espTimeCell.textContent = espTime;
           lastCell.style.backgroundColor = color;
         }
       }
@@ -138,67 +172,95 @@ function App() {
     const fetchDataInterval = setInterval(() => {
       fetchData1()
         .then((newData) => {
+          console.log(newData);
+          newData.sort((a, b) => {
+            if (a.status === "online" && b.status !== "online") {
+              return -1; // a should come before b
+            } else if (a.status !== "online" && b.status === "online") {
+              return 1; // b should come before a
+            } else {
+              return 0; // no change in ordering
+            }
+          });
           newData.forEach((newItem) => {
             const prevItem = previousData[newItem.name];
-            console.log(newItem.lastSeen);
+
             if (!prevItem || prevItem.lastSeen !== newItem.lastSeen) {
               // Data changed, reset duration and log green
               sameDataDurations[newItem.name] = 0;
-              console.log(
-                `%c${newItem.name} is initially fetched.`,
-                "color: green"
+              // console.log(
+              //   `%c${newItem.name} is initially fetched.`,
+              //   "color: green"
+              // );
+              updateTableDevice(
+                newItem.name,
+                "green",
+                newItem.lastSeen,
+                newItem.ad,
+                newItem.cha
               );
-              updateTableDevice(newItem.name, "green");
             } else {
               // Data remains the same, increment duration
               sameDataDurations[newItem.name] += 5;
 
               if (sameDataDurations[newItem.name] === 5) {
-                console.log(
-                  `%c${newItem.name} has remained the same for ${
-                    sameDataDurations[newItem.name]
-                  } seconds.`,
-                  "color: orange"
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurations[newItem.name]
+                //   } seconds.`,
+                //   "color: orange"
+                // );
+                updateTableDevice(
+                  newItem.name,
+                  "orange",
+                  newItem.lastSeen,
+                  newItem.ad,
+                  newItem.cha
                 );
-                updateTableDevice(newItem.name, "orange");
               } else if (sameDataDurations[newItem.name] >= 10) {
-                console.log(
-                  `%c${newItem.name} has remained the same for ${
-                    sameDataDurations[newItem.name]
-                  } seconds.`,
-                  "color: red"
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurations[newItem.name]
+                //   } seconds.`,
+                //   "color: red"
+                // );
+                updateTableDevice(
+                  newItem.name,
+                  "red",
+                  newItem.lastSeen,
+                  newItem.ad,
+                  newItem.cha
                 );
-                updateTableDevice(newItem.name, "red");
               }
             }
             if (!prevItem || prevItem.espLastSeen !== newItem.espLastSeen) {
               // Data changed, reset duration and log green
               sameDataDurationsESP[newItem.name] = 0;
-              console.log(
-                `%c${newItem.name} is initially fetched.`,
-                "color: green"
-              );
-              updateTableESP(newItem.name, "green");
+              // console.log(
+              //   `%c${newItem.name} is initially fetched.`,
+              //   "color: green"
+              // );
+              updateTableESP(newItem.name, "green", newItem.espLastSeen);
             } else {
               // Data remains the same, increment duration
               sameDataDurationsESP[newItem.name] += 5;
 
               if (sameDataDurationsESP[newItem.name] === 5) {
-                console.log(
-                  `%c${newItem.name} has remained the same for ${
-                    sameDataDurationsESP[newItem.name]
-                  } seconds.`,
-                  "color: orange"
-                );
-                updateTableESP(newItem.name, "orange");
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurationsESP[newItem.name]
+                //   } seconds.`,
+                //   "color: orange"
+                // );
+                updateTableESP(newItem.name, "orange", newItem.espLastSeen);
               } else if (sameDataDurationsESP[newItem.name] >= 10) {
-                console.log(
-                  `%c${newItem.name} has remained the same for ${
-                    sameDataDurationsESP[newItem.name]
-                  } seconds.`,
-                  "color: red"
-                );
-                updateTableESP(newItem.name, "red");
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurationsESP[newItem.name]
+                //   } seconds.`,
+                //   "color: red"
+                // );
+                updateTableESP(newItem.name, "red", newItem.espLastSeen);
               }
             }
           });
@@ -211,7 +273,7 @@ function App() {
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
-    }, 5000);
+    }, 20000);
 
     return () => clearInterval(fetchDataInterval);
   }, []);
@@ -244,15 +306,73 @@ function App() {
     });
   };
 
-  const handleChangeUrl = (item, e) => {
+  const handleChangeUrl = async (item, e) => {
+    try {
+      const db = getDatabase();
+      const adRef = ref(db, "advertisement/vid1");
+      const snapshot = await get(adRef);
+      const url = e.target.value;
+      if (snapshot.exists()) {
+        const vid1Data = snapshot.val().adid;
+        const vid1StartTime = snapshot.val().start_time;
+        console.log(vid1Data);
+        console.log(e);
+
+        await Promise.all([
+          update(ref(db, "pi_name-cha/" + item.name), {
+            URL: url,
+            adid: vid1Data,
+            start_time: vid1StartTime,
+          }),
+          update(ref(db, "data_log/" + item.name), {
+            changed_by: "admin",
+            action: `URL changed from ${item.URL} to ${e.target.value}`,
+          }),
+        ]);
+
+        console.log("Firebase data updated successfully");
+      } else {
+        console.log("No data exists at the specified path.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  // const handleChangeUrl = (item, e) => {
+  //   const db = getDatabase();
+  //   const adRef = ref(db, "advertisement/vid1");
+  //   const adReftest = ref(db, "pi_name-cha/");
+  //   console.log(adReftest);
+  //   console.log(adRef);
+
+  //   console.log(e);
+  //   update(ref(db, "pi_name-cha/" + item.name), {
+  //     URL: e.target.value,
+  //   });
+  //   update(ref(db, "data_log/" + item.name), {
+  //     changed_by: "admin",
+  //     action: `URL changed from ${item.URL} to ${e.target.value}`,
+  //   });
+  // };
+  const [loading, setLoading] = useState(false);
+
+  const handleSwitchToggle = (deviceId, newValue) => {
     const db = getDatabase();
-    update(ref(db, "pi_name-cha/" + item.name), {
-      URL: e.target.value,
-    });
-    update(ref(db, "data_log/" + item.name), {
-      changed_by: "admin",
-      action: `URL changed from ${item.URL} to ${e.target.value}`,
-    });
+    const piChaRef = ref(db, `pi_name-cha/${deviceId}`);
+    setLoading(true);
+
+    // Update espctr value directly
+    update(piChaRef, {
+      espctr: newValue,
+    })
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error updating data:", error);
+        setLoading(false);
+      });
   };
 
   const handleRegister = () => {
@@ -310,6 +430,7 @@ function App() {
     setData((prevData) => {
       const newData = prevData.map((dataItem) => {
         if (dataItem === item) {
+          console.log(dataItem);
           return { ...dataItem, pinned: !dataItem.pinned };
         }
         return dataItem;
@@ -335,6 +456,7 @@ function App() {
               <th>Lastseen-ESP</th>
               <th>Device State</th>
               <th>Device State ESP</th>
+              <th className="switch-div">Switch</th>
             </tr>
             {data.map((item, index) => (
               <tr
@@ -343,10 +465,11 @@ function App() {
                 data-name={item.name}
               >
                 <td className="table-cell">{item.name}</td>
-                <td className="table-cell">{item.rest}</td>
+                <td className="table-cell">{item.restaurantDev}</td>
                 <td className="table-cell">
                   <select
-                    value={item.cha}
+                    // value={item.cha}
+                    className="cha-name"
                     onChange={(e) => handleChangeChannel(item, e)}
                   >
                     {channel.map((channelItem, index) => (
@@ -356,7 +479,8 @@ function App() {
                 </td>
                 <td className="table-cell">
                   <select
-                    value={item.ad}
+                    className="ad-name"
+                    // value={item.ad}
                     onChange={(e) => handleChangeUrl(item, e)}
                   >
                     {allAdds.map((addItem, index) => (
@@ -365,15 +489,30 @@ function App() {
                   </select>
                 </td>
 
-                <td className="table-cell">{item.lastSeen}</td>
-                <td className="table-cell">{item.espLastSeen}</td>
-                <td className="color-cell"></td>
+                <td className="table-cell-dev">{item.lastSeen}</td>
+                <td className="table-cell-esp">{item.espLastSeen}</td>
+                <td className="">
+                  <div className="color-cell"></div>
+                </td>
                 <td className="color-cell-esp"></td>
-                <td className="pin-cell">
+                <td className="switch-cell">
+                  <label className="switch flex">
+                    <input
+                      type="checkbox"
+                      checked={item.espctr}
+                      onChange={(e) =>
+                        handleSwitchToggle(item.name, e.target.checked)
+                      }
+                      disabled={loading}
+                    />
+                    <span className="slider round"></span>
+                  </label>
+                </td>
+                {/* <td className="pin-cell">
                   <button onClick={() => handlePinToggle(item)}>
                     {item.pinned ? "Unpin" : "Pin"}
                   </button>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
