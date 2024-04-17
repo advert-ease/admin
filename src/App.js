@@ -20,10 +20,10 @@ function App() {
   const [channel, setChannels] = useState([]);
   const [allChannels, setAllChannels] = useState([]);
   const [allAdds, setAllAdds] = useState([]);
-  // useEffect(() => {
-  //   fetchData1();
-  //   fetchData2();
-  // }, []);
+  useEffect(() => {
+    // fetchData1();
+    fetchData2();
+  }, []);
   const fetchData1 = () => {
     return new Promise((resolve, reject) => {
       const db = getDatabase();
