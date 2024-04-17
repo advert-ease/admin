@@ -33,7 +33,15 @@ function App() {
 
       onValue(piRef, (snapshot) => {
         snapshot.forEach((item) => {
-          let esp_lseen, dev_lseen, x, y, z, statusDev, devRest, switchChecked;
+          let esp_lseen,
+            dev_lseen,
+            x,
+            y,
+            z,
+            statusDev,
+            devRest,
+            switchChecked,
+            colourStat;
           const idvlRef = ref(db, "pi_name-cha/" + item.key);
           const iddevRef = ref(db, "devices/" + item.key);
           // console.log(iddevRef);
@@ -91,6 +99,13 @@ function App() {
               }
             });
           });
+          onValue(idvlRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "statusColour") {
+                colourStat = doc.val();
+              }
+            });
+          });
           newData.push({
             name: item.key,
             ad: z,
@@ -102,10 +117,11 @@ function App() {
             pinned: false, // Initialize pinned state to false
             restaurantDev: devRest,
             switchChecked: switchChecked,
+            colourStat: colourStat,
           });
         });
         setData(newData);
-        console.log(newData);
+
         resolve(newData);
       });
     });
@@ -209,18 +225,17 @@ function App() {
             if (!prevItem || prevItem.lastSeen !== newItem.lastSeen) {
               // Data changed, reset duration and log green
               sameDataDurations[newItem.name] = 0;
+              const db = getDatabase();
+              const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+
+              // Update espctr value directly
+              update(piChaRef, {
+                statusColourDev: "0",
+              });
               // console.log(
               //   `%c${newItem.name} is initially fetched.`,
               //   "color: green"
               // );
-              updateTableDevice(
-                newItem.name,
-                "green",
-                newItem.lastSeen,
-                newItem.ad,
-                newItem.cha,
-                newItem.switchChecked
-              );
             } else {
               // Data remains the same, increment duration
               sameDataDurations[newItem.name] += 5;
@@ -232,14 +247,13 @@ function App() {
                 //   } seconds.`,
                 //   "color: orange"
                 // );
-                updateTableDevice(
-                  newItem.name,
-                  "orange",
-                  newItem.lastSeen,
-                  newItem.ad,
-                  newItem.cha,
-                  newItem.switchChecked
-                );
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourDev: "1",
+                });
               } else if (sameDataDurations[newItem.name] === 10) {
                 // console.log(
                 //   `%c${newItem.name} has remained the same for ${
@@ -247,14 +261,14 @@ function App() {
                 //   } seconds.`,
                 //   "color: pink"
                 // );
-                updateTableDevice(
-                  newItem.name,
-                  "orange",
-                  newItem.lastSeen,
-                  newItem.ad,
-                  newItem.cha,
-                  newItem.switchChecked
-                );
+                const db1 = getDatabase();
+                const piChaRef = ref(db1, `pi_name-cha/${newItem.name}`);
+
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourDev: "2",
+                });
+
                 const db = getDatabase();
                 const itemRef = ref(db, "pi_name-cha/" + newItem.name);
                 update(itemRef, {
@@ -280,14 +294,13 @@ function App() {
                 //   } seconds.`,
                 //   "color: red"
                 // );
-                updateTableDevice(
-                  newItem.name,
-                  "red",
-                  newItem.lastSeen,
-                  newItem.ad,
-                  newItem.cha,
-                  newItem.switchChecked
-                );
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourDev: "3",
+                });
               }
             }
 
@@ -298,7 +311,13 @@ function App() {
               //   `%c${newItem.name} is initially fetched.`,
               //   "color: green"
               // );
-              updateTableESP(newItem.name, "green", newItem.espLastSeen);
+              const db = getDatabase();
+              const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+
+              // Update espctr value directly
+              update(piChaRef, {
+                statusColourEsp: "0",
+              });
             } else {
               // Data remains the same, increment duration
               sameDataDurationsESP[newItem.name] += 5;
@@ -310,7 +329,13 @@ function App() {
                 //   } seconds.`,
                 //   "color: orange"
                 // );
-                updateTableESP(newItem.name, "orange", newItem.espLastSeen);
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourEsp: "1",
+                });
               } else if (
                 sameDataDurationsESP[newItem.name] >= 10 &&
                 sameDataDurationsESP[newItem.name] < 15
@@ -321,7 +346,13 @@ function App() {
                 //   } seconds.`,
                 //   "color: pink"
                 // );
-                updateTableESP(newItem.name, "orange", newItem.espLastSeen);
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourEsp: "2",
+                });
               } else if (sameDataDurationsESP[newItem.name] >= 15) {
                 // console.log(
                 //   `%c${newItem.name} has remained the same for ${
@@ -329,7 +360,13 @@ function App() {
                 //   } seconds.`,
                 //   "color: red"
                 // );
-                updateTableESP(newItem.name, "red", newItem.espLastSeen);
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourEsp: "3",
+                });
               }
             }
           });
@@ -342,7 +379,118 @@ function App() {
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
-    }, 300000);
+    }, 5000);
+
+    return () => clearInterval(fetchDataInterval);
+  }, []);
+
+  useEffect(() => {
+    let previousData = {};
+    let sameDataDurations = {};
+    let sameDataDurationsESP = {};
+
+    const updateTableDevice = (
+      itemName,
+      color,
+      devLastSeen,
+      adName,
+      chaName,
+      switchChecked
+    ) => {
+      // Find the table row corresponding to the item name
+      const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
+
+      // If the table row exists, update the color of the last cell
+      if (tableRow) {
+        const lastCell = tableRow.querySelector(".color-cell");
+        const devTimeCell = tableRow.querySelector(".table-cell-dev");
+        const adNameCell = tableRow.querySelector(".ad-name");
+        const chaNameCell = tableRow.querySelector(".cha-name");
+        const switchESPCell = tableRow.querySelector(
+          ".switch-cell .switch-esp"
+        );
+
+        console.log(switchESPCell);
+        if (lastCell) {
+          devTimeCell.textContent = devLastSeen;
+          lastCell.style.backgroundColor = color;
+          adNameCell.value = adName;
+          chaNameCell.value = chaName;
+          if (switchESPCell) {
+            console.log("hi");
+            switchESPCell.checked = switchChecked;
+          }
+        }
+      }
+    };
+    const updateTableESP = (itemName, color, espTime) => {
+      // Find the table row corresponding to the item name
+      const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
+
+      // If the table row exists, update the color of the last cell
+      if (tableRow) {
+        const espTimeCell = tableRow.querySelector(".table-cell-esp");
+        const lastCell = tableRow.querySelector(".color-cell-esp");
+
+        if (lastCell) {
+          espTimeCell.textContent = espTime;
+          lastCell.style.backgroundColor = color;
+        }
+      }
+    };
+
+    const fetchDataInterval = setInterval(() => {
+      fetchData1()
+        .then((newData) => {
+          newData.forEach((newItem) => {
+            // Data changed, reset duration and log green
+
+            const db = getDatabase();
+            let colourStatDev, colourStatEsp;
+            const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+            onValue(piChaRef, (snap) => {
+              snap.forEach((doc) => {
+                if (doc.key === "statusColourDev") {
+                  colourStatDev = doc.val();
+                }
+                if (doc.key === "statusColourEsp") {
+                  colourStatEsp = doc.val();
+                }
+              });
+            });
+            console.log(colourStatDev);
+            console.log(colourStatEsp);
+            let devCalcColour =
+              colourStatDev == 0
+                ? "green"
+                : colourStatDev == 1
+                ? "orange"
+                : colourStatDev == 2
+                ? "pink"
+                : "red";
+            let espCalcColour =
+              colourStatEsp == 0
+                ? "green"
+                : colourStatEsp == 1
+                ? "orange"
+                : colourStatEsp == 2
+                ? "pink"
+                : "red";
+            updateTableDevice(
+              newItem.name,
+              devCalcColour,
+              newItem.lastSeen,
+              newItem.ad,
+              newItem.cha,
+              newItem.switchChecked
+            );
+            updateTableESP(newItem.name, espCalcColour, newItem.espLastSeen);
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }, 5000);
 
     return () => clearInterval(fetchDataInterval);
   }, []);
@@ -602,7 +750,7 @@ function App() {
               <tr>
                 <td className="table-cell">{item.name}</td>
                 <td className="table-cell">
-                  {item.mode ? "TV Mode" : "AD Mode"}
+                  {item.mode ? "AD Mode" : "TV Mode"}
                 </td>
                 <td className="table-cell">
                   <button
