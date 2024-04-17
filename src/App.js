@@ -15,23 +15,23 @@ import {
 
 function App() {
   const [data, setData] = useState([]);
+  const [dataColor, setDataColor] = useState([]);
   const [dataDev, setDataDev] = useState([]);
   const [channel, setChannels] = useState([]);
   const [allChannels, setAllChannels] = useState([]);
   const [allAdds, setAllAdds] = useState([]);
-  useEffect(() => {
-    fetchData1();
-    fetchData2();
-  }, []);
+  // useEffect(() => {
+  //   fetchData1();
+  //   fetchData2();
+  // }, []);
   const fetchData1 = () => {
     return new Promise((resolve, reject) => {
       const db = getDatabase();
       const piRef = ref(db, "pi_name-cha/");
       const devRef = ref(db, "devices/");
 
-      const newData = [];
-
       onValue(piRef, (snapshot) => {
+        const newData = [];
         snapshot.forEach((item) => {
           let esp_lseen,
             dev_lseen,
@@ -41,6 +41,7 @@ function App() {
             statusDev,
             devRest,
             switchChecked,
+            UtcDev,
             colourStat;
           const idvlRef = ref(db, "pi_name-cha/" + item.key);
           const iddevRef = ref(db, "devices/" + item.key);
@@ -104,6 +105,9 @@ function App() {
               if (doc.key === "statusColour") {
                 colourStat = doc.val();
               }
+              if (doc.key === "last_checked_time_dev") {
+                UtcDev = doc.val();
+              }
             });
           });
           newData.push({
@@ -118,9 +122,123 @@ function App() {
             restaurantDev: devRest,
             switchChecked: switchChecked,
             colourStat: colourStat,
+            UtcDev: UtcDev,
           });
         });
         setData(newData);
+
+        resolve(newData);
+      });
+    });
+  };
+  const fetchData1color = () => {
+    return new Promise((resolve, reject) => {
+      const db = getDatabase();
+      const piRef = ref(db, "pi_name-cha/");
+      const devRef = ref(db, "devices/");
+
+      const newData = [];
+
+      onValue(piRef, (snapshot) => {
+        snapshot.forEach((item) => {
+          let esp_lseen,
+            dev_lseen,
+            x,
+            y,
+            z,
+            statusDev,
+            devRest,
+            switchChecked,
+            UtcDev,
+            UtcEsp,
+            colourStat;
+          const idvlRef = ref(db, "pi_name-cha/" + item.key);
+          const iddevRef = ref(db, "devices/" + item.key);
+          // console.log(iddevRef);
+          const esptRef = ref(db, "esptime/" + item.key);
+
+          onValue(esptRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "last_seen") {
+                esp_lseen = doc.val();
+              }
+            });
+          });
+
+          onValue(iddevRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "last_seen") {
+                dev_lseen = doc.val();
+              }
+            });
+          });
+
+          onValue(iddevRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "restaurant") {
+                devRest = doc.val();
+              }
+            });
+          });
+
+          onValue(iddevRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "status") {
+                statusDev = doc.val();
+              }
+            });
+          });
+
+          onValue(idvlRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "URL") {
+                z = doc.val();
+              }
+              if (doc.key === "channel") {
+                x = doc.val();
+              }
+              if (doc.key === "cust_id") {
+                y = doc.val();
+              }
+            });
+          });
+          onValue(idvlRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "espctr") {
+                switchChecked = doc.val();
+              }
+            });
+          });
+          onValue(idvlRef, (snap) => {
+            snap.forEach((doc) => {
+              if (doc.key === "statusColour") {
+                colourStat = doc.val();
+              }
+              if (doc.key === "last_checked_time_dev") {
+                UtcDev = doc.val();
+              }
+              if (doc.key === "last_checked_time_esp") {
+                UtcDev = doc.val();
+              }
+            });
+          });
+          newData.push({
+            name: item.key,
+            ad: z,
+            cha: x,
+            rest: y,
+            lastSeen: dev_lseen,
+            espLastSeen: esp_lseen,
+            status: statusDev,
+            pinned: false, // Initialize pinned state to false
+            restaurantDev: devRest,
+            switchChecked: switchChecked,
+            colourStat: colourStat,
+            UtcDev: UtcDev,
+            UtcEsp: UtcEsp,
+          });
+        });
+        setDataColor(newData);
 
         resolve(newData);
       });
@@ -151,12 +269,8 @@ function App() {
       });
     });
   };
-
   useEffect(() => {
-    let previousData = {};
-    let sameDataDurations = {};
-    let sameDataDurationsESP = {};
-
+    console.log("hi1");
     const updateTableDevice = (
       itemName,
       color,
@@ -178,246 +292,12 @@ function App() {
           ".switch-cell .switch-esp"
         );
 
-        console.log(switchESPCell);
         if (lastCell) {
           devTimeCell.textContent = devLastSeen;
           lastCell.style.backgroundColor = color;
           adNameCell.value = adName;
           chaNameCell.value = chaName;
           if (switchESPCell) {
-            console.log("hi");
-            switchESPCell.checked = switchChecked;
-          }
-        }
-      }
-    };
-    const updateTableESP = (itemName, color, espTime) => {
-      // Find the table row corresponding to the item name
-      const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
-
-      // If the table row exists, update the color of the last cell
-      if (tableRow) {
-        const espTimeCell = tableRow.querySelector(".table-cell-esp");
-        const lastCell = tableRow.querySelector(".color-cell-esp");
-
-        if (lastCell) {
-          espTimeCell.textContent = espTime;
-          lastCell.style.backgroundColor = color;
-        }
-      }
-    };
-
-    const fetchDataInterval = setInterval(() => {
-      fetchData1()
-        .then((newData) => {
-          console.log(newData);
-          newData.sort((a, b) => {
-            if (a.status === "online" && b.status !== "online") {
-              return -1; // a should come before b
-            } else if (a.status !== "online" && b.status === "online") {
-              return 1; // b should come before a
-            } else {
-              return 0; // no change in ordering
-            }
-          });
-          newData.forEach((newItem) => {
-            const prevItem = previousData[newItem.name];
-            if (!prevItem || prevItem.lastSeen !== newItem.lastSeen) {
-              // Data changed, reset duration and log green
-              sameDataDurations[newItem.name] = 0;
-              const db = getDatabase();
-              const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-
-              // Update espctr value directly
-              update(piChaRef, {
-                statusColourDev: "0",
-              });
-              // console.log(
-              //   `%c${newItem.name} is initially fetched.`,
-              //   "color: green"
-              // );
-            } else {
-              // Data remains the same, increment duration
-              sameDataDurations[newItem.name] += 5;
-
-              if (sameDataDurations[newItem.name] === 5) {
-                // console.log(
-                //   `%c${newItem.name} has remained the same for ${
-                //     sameDataDurations[newItem.name]
-                //   } seconds.`,
-                //   "color: orange"
-                // );
-                const db = getDatabase();
-                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-
-                // Update espctr value directly
-                update(piChaRef, {
-                  statusColourDev: "1",
-                });
-              } else if (sameDataDurations[newItem.name] === 10) {
-                // console.log(
-                //   `%c${newItem.name} has remained the same for ${
-                //     sameDataDurations[newItem.name]
-                //   } seconds.`,
-                //   "color: pink"
-                // );
-                const db1 = getDatabase();
-                const piChaRef = ref(db1, `pi_name-cha/${newItem.name}`);
-
-                // Update espctr value directly
-                update(piChaRef, {
-                  statusColourDev: "2",
-                });
-
-                const db = getDatabase();
-                const itemRef = ref(db, "pi_name-cha/" + newItem.name);
-                update(itemRef, {
-                  espctr: false, // Update espctr to false
-                }).then(() => {
-                  // Once updated, set it back to true after a brief delay
-                  setTimeout(() => {
-                    update(itemRef, {
-                      espctr: true, // Set espctr back to true
-                    });
-                  }, 100); // Delay in milliseconds
-                });
-
-                // Log the channel change action
-                update(ref(db, "data_log/" + newItem.name), {
-                  changed_by: "admin",
-                  action: `restarted device ${newItem.name}`,
-                });
-              } else if (sameDataDurations[newItem.name] >= 15) {
-                // console.log(
-                //   `%c${newItem.name} has remained the same for ${
-                //     sameDataDurations[newItem.name]
-                //   } seconds.`,
-                //   "color: red"
-                // );
-                const db = getDatabase();
-                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-
-                // Update espctr value directly
-                update(piChaRef, {
-                  statusColourDev: "3",
-                });
-              }
-            }
-
-            if (!prevItem || prevItem.espLastSeen !== newItem.espLastSeen) {
-              // Data changed, reset duration and log green
-              sameDataDurationsESP[newItem.name] = 0;
-              // console.log(
-              //   `%c${newItem.name} is initially fetched.`,
-              //   "color: green"
-              // );
-              const db = getDatabase();
-              const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-
-              // Update espctr value directly
-              update(piChaRef, {
-                statusColourEsp: "0",
-              });
-            } else {
-              // Data remains the same, increment duration
-              sameDataDurationsESP[newItem.name] += 5;
-
-              if (sameDataDurationsESP[newItem.name] === 5) {
-                // console.log(
-                //   `%c${newItem.name} has remained the same for ${
-                //     sameDataDurationsESP[newItem.name]
-                //   } seconds.`,
-                //   "color: orange"
-                // );
-                const db = getDatabase();
-                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-
-                // Update espctr value directly
-                update(piChaRef, {
-                  statusColourEsp: "1",
-                });
-              } else if (
-                sameDataDurationsESP[newItem.name] >= 10 &&
-                sameDataDurationsESP[newItem.name] < 15
-              ) {
-                // console.log(
-                //   `%c${newItem.name} has remained the same for ${
-                //     sameDataDurationsESP[newItem.name]
-                //   } seconds.`,
-                //   "color: pink"
-                // );
-                const db = getDatabase();
-                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-
-                // Update espctr value directly
-                update(piChaRef, {
-                  statusColourEsp: "2",
-                });
-              } else if (sameDataDurationsESP[newItem.name] >= 15) {
-                // console.log(
-                //   `%c${newItem.name} has remained the same for ${
-                //     sameDataDurationsESP[newItem.name]
-                //   } seconds.`,
-                //   "color: red"
-                // );
-                const db = getDatabase();
-                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-
-                // Update espctr value directly
-                update(piChaRef, {
-                  statusColourEsp: "3",
-                });
-              }
-            }
-          });
-
-          previousData = newData.reduce((prev, current) => {
-            prev[current.name] = current;
-            return prev;
-          }, {});
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-        });
-    }, 5000);
-
-    return () => clearInterval(fetchDataInterval);
-  }, []);
-
-  useEffect(() => {
-    let previousData = {};
-    let sameDataDurations = {};
-    let sameDataDurationsESP = {};
-
-    const updateTableDevice = (
-      itemName,
-      color,
-      devLastSeen,
-      adName,
-      chaName,
-      switchChecked
-    ) => {
-      // Find the table row corresponding to the item name
-      const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
-
-      // If the table row exists, update the color of the last cell
-      if (tableRow) {
-        const lastCell = tableRow.querySelector(".color-cell");
-        const devTimeCell = tableRow.querySelector(".table-cell-dev");
-        const adNameCell = tableRow.querySelector(".ad-name");
-        const chaNameCell = tableRow.querySelector(".cha-name");
-        const switchESPCell = tableRow.querySelector(
-          ".switch-cell .switch-esp"
-        );
-
-        console.log(switchESPCell);
-        if (lastCell) {
-          devTimeCell.textContent = devLastSeen;
-          lastCell.style.backgroundColor = color;
-          adNameCell.value = adName;
-          chaNameCell.value = chaName;
-          if (switchESPCell) {
-            console.log("hi");
             switchESPCell.checked = switchChecked;
           }
         }
@@ -493,6 +373,229 @@ function App() {
     }, 5000);
 
     return () => clearInterval(fetchDataInterval);
+  }, []);
+  useEffect(() => {
+    let previousData = {};
+    let sameDataDurations = {};
+    let sameDataDurationsESP = {};
+
+    const fetchDataInterval2 = setInterval(() => {
+      fetchData1()
+        .then((newData) => {
+          console.log(newData);
+          newData.sort((a, b) => {
+            if (a.status === "online" && b.status !== "online") {
+              return -1; // a should come before b
+            } else if (a.status !== "online" && b.status === "online") {
+              return 1; // b should come before a
+            } else {
+              return 0; // no change in ordering
+            }
+          });
+          newData.forEach((newItem) => {
+            const prevItem = previousData[newItem.name];
+            if (
+              (!prevItem || prevItem.lastSeen !== newItem.lastSeen) &&
+              new Date(newItem.UtcDev).getTime() -
+                new Date(newItem.lastSeen).getTime() >
+                300000
+            ) {
+              // Data changed, reset duration and log green
+              sameDataDurations[newItem.name] = 0;
+              const db = getDatabase();
+              const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+              const currentTimeUTCDev = new Date().toISOString();
+              // Update espctr value directly
+              update(piChaRef, {
+                statusColourDev: "0",
+                last_checked_time_dev: currentTimeUTCDev,
+              });
+
+              // console.log(
+              //   `%c${newItem.name} is initially fetched.`,
+              //   "color: green"
+              // );
+            } else {
+              // Data remains the same, increment duration
+              sameDataDurations[newItem.name] += 5;
+
+              if (
+                sameDataDurations[newItem.name] === 5 &&
+                new Date(newItem.UtcDev).getTime() -
+                  new Date(newItem.lastSeen).getTime() >
+                  300000
+              ) {
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurations[newItem.name]
+                //   } seconds.`,
+                //   "color: orange"
+                // );
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+                const currentTimeUTCDev = new Date().toISOString();
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourDev: "1",
+                  last_checked_time_dev: currentTimeUTCDev,
+                });
+              } else if (
+                sameDataDurations[newItem.name] === 10 &&
+                new Date(newItem.UtcDev).getTime() -
+                  new Date(newItem.lastSeen).getTime() >
+                  300000
+              ) {
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurations[newItem.name]
+                //   } seconds.`,
+                //   "color: pink"
+                // );
+                const db1 = getDatabase();
+
+                const piChaRef = ref(db1, `pi_name-cha/${newItem.name}`);
+                const currentTimeUTCDev = new Date().toISOString();
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourDev: "2",
+                  last_checked_time_dev: currentTimeUTCDev,
+                });
+
+                const db = getDatabase();
+                const itemRef = ref(db, "pi_name-cha/" + newItem.name);
+                update(itemRef, {
+                  espctr: false, // Update espctr to false
+                }).then(() => {
+                  // Once updated, set it back to true after a brief delay
+                  setTimeout(() => {
+                    update(itemRef, {
+                      espctr: true, // Set espctr back to true
+                    });
+                  }, 100); // Delay in milliseconds
+                });
+
+                // Log the channel change action
+                update(ref(db, "data_log/" + newItem.name), {
+                  changed_by: "admin",
+                  action: `restarted device ${newItem.name}`,
+                });
+              } else if (
+                sameDataDurations[newItem.name] >= 15 &&
+                new Date(newItem.UtcDev).getTime() -
+                  new Date(newItem.lastSeen).getTime() >
+                  300000
+              ) {
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+                const currentTimeUTCDev = new Date().toISOString();
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourDev: "3",
+                  last_checked_time_dev: currentTimeUTCDev,
+                });
+              }
+            }
+
+            if (
+              (!prevItem || prevItem.espLastSeen !== newItem.espLastSeen) &&
+              new Date(newItem.UtcEsp).getTime() -
+                new Date(newItem.espLastSeen).getTime() >
+                300000
+            ) {
+              // Data changed, reset duration and log green
+              sameDataDurationsESP[newItem.name] = 0;
+              // console.log(
+              //   `%c${newItem.name} is initially fetched.`,
+              //   "color: green"
+              // );
+              const db = getDatabase();
+              const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+              const currentTimeUTCEsp = new Date().toISOString();
+              // Update espctr value directly
+              update(piChaRef, {
+                statusColourEsp: "0",
+                last_checked_time_esp: currentTimeUTCEsp,
+              });
+            } else {
+              // Data remains the same, increment duration
+              sameDataDurationsESP[newItem.name] += 5;
+
+              if (
+                sameDataDurationsESP[newItem.name] === 5 &&
+                new Date(newItem.UtcEsp).getTime() -
+                  new Date(newItem.espLastSeen).getTime() >
+                  300000
+              ) {
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurationsESP[newItem.name]
+                //   } seconds.`,
+                //   "color: orange"
+                // );
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+                const currentTimeUTCEsp = new Date().toISOString();
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourEsp: "1",
+                  last_checked_time_esp: currentTimeUTCEsp,
+                });
+              } else if (
+                sameDataDurationsESP[newItem.name] >= 10 &&
+                sameDataDurationsESP[newItem.name] < 15 &&
+                new Date(newItem.UtcEsp).getTime() -
+                  new Date(newItem.espLastSeen).getTime() >
+                  300000
+              ) {
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurationsESP[newItem.name]
+                //   } seconds.`,
+                //   "color: pink"
+                // );
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+                const currentTimeUTCEsp = new Date().toISOString();
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourEsp: "2",
+                  last_checked_time_esp: currentTimeUTCEsp,
+                });
+              } else if (
+                sameDataDurationsESP[newItem.name] >= 15 &&
+                new Date(newItem.UtcEsp).getTime() -
+                  new Date(newItem.espLastSeen).getTime() >
+                  300000
+              ) {
+                // console.log(
+                //   `%c${newItem.name} has remained the same for ${
+                //     sameDataDurationsESP[newItem.name]
+                //   } seconds.`,
+                //   "color: red"
+                // );
+                const db = getDatabase();
+                const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+                const currentTimeUTCEsp = new Date().toISOString();
+                // Update espctr value directly
+                update(piChaRef, {
+                  statusColourEsp: "3",
+                  last_checked_time_esp: currentTimeUTCEsp,
+                });
+              }
+            }
+          });
+
+          previousData = newData.reduce((prev, current) => {
+            prev[current.name] = current;
+            return prev;
+          }, {});
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }, 300000);
+
+    return () => clearInterval(fetchDataInterval2);
   }, []);
 
   const handleChangeMode = (item) => {
