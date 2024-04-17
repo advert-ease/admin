@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const deviceLocationMappingController = require('../controllers/devicelocationmapping.controller');
+const DeviceLocationMappingController = require('../controllers/devicelocationmapping.controller');
 
-// Routes for device location mapping APIs
-router.post('/device-location-mapping/create', deviceLocationMappingController.insertDeviceLocationMapping);
-router.put('/device-location-mapping/:id', deviceLocationMappingController.updateloaction);
-router.get('/device-location-mapping', deviceLocationMappingController.getAllDeviceLocationMappings);
+
+router.post('/devicelocation_create', DeviceLocationMappingController.createDeviceLocationMapping);
+router.put('/devicelocation/:id', DeviceLocationMappingController.updateDeviceLocationMapping);
+router.get('/devicelocation', DeviceLocationMappingController.getAllDeviceLocationMappings);
+router.get('/devicelocation/:id', DeviceLocationMappingController.getDeviceLocationMappingById);
+
 
 module.exports = router;

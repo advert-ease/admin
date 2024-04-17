@@ -1,10 +1,45 @@
-const preprovision = require('../models/pre_provision');
+const PreProvision = require('../models/pre_provision');
 
-exports.createpreprovision  = async (preprovisionData) => {
-    try {
-      const preprovisonMapping  = await preprovision.create(preprovisionData);
-      return preprovisonMapping;
-    } catch (error) {
+
+
+exports.createPreProvision = async (preProvisionData) => {
+  try {
+      const preProvision = await PreProvision.create(preProvisionData);
+      return preProvision;
+  } catch (error) {
       throw new Error(error.message);
-    }
-  };
+  }
+};
+
+exports.updatePreProvision = async (deviceId, updatedPreProvisionData) => {
+  try {
+      const [updatedRowsCount] = await PreProvision.update(updatedPreProvisionData, {
+          where: { device_id: deviceId },
+      });
+      if (updatedRowsCount === 0) {
+          throw new Error('PreProvision data not found or no changes applied.');
+      }
+      const updatedPreProvision = await PreProvision.findByPk(deviceId);
+      return updatedPreProvision;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+};
+
+exports.getAllPreProvisions = async () => {
+  try {
+      const allPreProvisions = await PreProvision.findAll();
+      return allPreProvisions;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+};
+
+exports.getPreProvisionById = async (deviceId) => {
+  try {
+      const preProvision = await PreProvision.findByPk(deviceId);
+      return preProvision;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+};

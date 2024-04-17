@@ -1,42 +1,44 @@
 const DeviceLocationMapping = require('../models/device_location_mapping');
 
-// Service function for inserting a new device location mapping
-exports.insertDeviceloaction = async (itemData) => {
+
+exports.createDeviceLocationMapping = async (mappingData) => {
   try {
-    const newlocation= await DeviceLocationMapping.create(itemData);
-    return newlocation;
+      const mapping = await DeviceLocationMapping.create(mappingData);
+      return mapping;
   } catch (error) {
-    throw new Error(error.message);
+      throw new Error(error.message);
   }
 };
 
-// Service function for updating an existing device location mapping
-exports.updateloactionmapping = async (itemId, updatedItemData) => {
+exports.updateDeviceLocationMapping = async (mappingId, updatedMappingData) => {
   try {
-    const [updatedRowsCount] = await DeviceLocationMapping.update(updatedItemData, {
-      where: { SL_NO: itemId }, // Target item by its ID
-    });
-
-    // Check if any rows were updated
-    if (updatedRowsCount === 0) {
-      // If no rows were updated, throw an error indicating the item was not found or no changes were applied
-      throw new Error('Item not found or no changes applied.');
-    }
-
-    // If rows were updated, fetch and return the updated item
-    const updatedItem = await DeviceLocationMapping.findByPk(itemId);
-    return updatedItem;
+      const [updatedRowsCount] = await DeviceLocationMapping.update(updatedMappingData, {
+          where: { Sl_no: mappingId },
+      });
+      if (updatedRowsCount === 0) {
+          throw new Error('Device Location Mapping not found or no changes applied.');
+      }
+      const updatedMapping = await DeviceLocationMapping.findByPk(mappingId);
+      return updatedMapping;
   } catch (error) {
-    // If an error occurs during the update operation, re-throw the error with a descriptive message
-    throw new Error(error.message);
+      throw new Error(error.message);
   }
 };
 
-// Service function for getting all device location mappings
 exports.getAllDeviceLocationMappings = async () => {
   try {
-    return await DeviceLocationMapping.findAll();
+      const allMappings = await DeviceLocationMapping.findAll();
+      return allMappings;
   } catch (error) {
-    throw new Error('Error while fetching device location mappings');
+      throw new Error(error.message);
+  }
+};
+
+exports.getDeviceLocationMappingById = async (mappingId) => {
+  try {
+      const mapping = await DeviceLocationMapping.findByPk(mappingId);
+      return mapping;
+  } catch (error) {
+      throw new Error(error.message);
   }
 };

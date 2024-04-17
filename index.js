@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require("express");
-const locationRouter = require('./src/routes/locationmaster.route'); 
+const locationRouter = require('./src/routes/preprovisionitems.route'); 
 const sequelize = require('./src/models/dbconnection');
 const app = express();
 

@@ -1,37 +1,41 @@
-const deviceLocationMappingService = require('../services/deviceloactionmapping.service');
+const DeviceLocationMappingService = require('../services/deviceloactionmapping.service');
 
 
-// Controller for inserting a new device location mapping
-exports.insertDeviceLocationMapping = async (req, res) => {
+
+exports.createDeviceLocationMapping = async (req, res, next) => {
   try {
-    const data = req.body;
-    const newDeviceLocationMapping = await deviceLocationMappingService.insertDeviceloaction(data);
-    res.status(201).json(newDeviceLocationMapping);
+      const mapping = await DeviceLocationMappingService.createDeviceLocationMapping(req.body);
+      res.status(201).json(mapping);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+      next(error);
   }
 };
 
-// Controller for updating an existing device location mapping
-exports.updateloaction = async (req, res) => {
+exports.updateDeviceLocationMapping = async (req, res, next) => {
+  const mappingId = req.params.id;
   try {
-    const itemId = req.params.id;
-    const updatedItemData = req.body;
-    const updatedItem = await deviceLocationMappingService.updateloactionmapping(itemId, updatedItemData);
-    res.status(200).json(updatedItem);
+      const updatedMapping = await DeviceLocationMappingService.updateDeviceLocationMapping(mappingId, req.body);
+      res.status(200).json(updatedMapping);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      next(error);
   }
 };
 
-// Controller for getting all device location mappings
-exports.getAllDeviceLocationMappings = async (req, res) => {
+exports.getAllDeviceLocationMappings = async (req, res, next) => {
   try {
-    const allDeviceLocationMappings = await deviceLocationMappingService.getAllDeviceLocationMappings();
-    res.status(200).json(allDeviceLocationMappings);
+      const allMappings = await DeviceLocationMappingService.getAllDeviceLocationMappings();
+      res.status(200).json(allMappings);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+      next(error);
+  }
+};
+
+exports.getDeviceLocationMappingById = async (req, res, next) => {
+  const mappingId = req.params.id;
+  try {
+      const mapping = await DeviceLocationMappingService.getDeviceLocationMappingById(mappingId);
+      res.status(200).json(mapping);
+  } catch (error) {
+      next(error);
   }
 };
