@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/config'); 
+const sequelize = require('../models/dbconnection'); 
+const VendorDetails =require('./vendor_details');
 const ItemMaster = sequelize.define('ItemMaster', {
     SL_NO: {
       type: DataTypes.INTEGER,

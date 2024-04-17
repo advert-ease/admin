@@ -1,11 +1,11 @@
 const deviceLocationMappingService = require('../services/deviceloactionmapping.service');
-const { validationResult } = require('express-validator');
+
 
 // Controller for inserting a new device location mapping
 exports.insertDeviceLocationMapping = async (req, res) => {
   try {
     const data = req.body;
-    const newDeviceLocationMapping = await deviceLocationMappingService.insertDeviceLocationMapping(data);
+    const newDeviceLocationMapping = await deviceLocationMappingService.insertDeviceloaction(data);
     res.status(201).json(newDeviceLocationMapping);
   } catch (error) {
     console.error(error);
@@ -14,15 +14,14 @@ exports.insertDeviceLocationMapping = async (req, res) => {
 };
 
 // Controller for updating an existing device location mapping
-exports.updateDeviceLocationMapping = async (req, res) => {
+exports.updateloaction = async (req, res) => {
   try {
-    const { id } = req.params;
-    const data = req.body;
-    const rowsUpdated = await deviceLocationMappingService.updateDeviceLocationMapping(id, data);
-    res.status(200).json({ rowsUpdated });
+    const itemId = req.params.id;
+    const updatedItemData = req.body;
+    const updatedItem = await deviceLocationMappingService.updateloactionmapping(itemId, updatedItemData);
+    res.status(200).json(updatedItem);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ error: error.message });
   }
 };
 

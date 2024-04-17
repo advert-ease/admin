@@ -1,5 +1,6 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/config'); 
+const { DataTypes, Sequelize } = require('sequelize');
+const sequelize = require('../models/dbconnection'); 
+
 const PreProvision = sequelize.define('PreProvision', {
     device_id: {
       type: DataTypes.INTEGER,
@@ -16,13 +17,12 @@ const PreProvision = sequelize.define('PreProvision', {
     },
     Last_modified_date: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      onUpdate: DataTypes.NOW
+      defaultValue: Sequelize.NOW, 
+      onUpdate: Sequelize.NOW
     }
   }, {
     tableName: 'pre_provision', 
     timestamps: false 
   });
   
- 
-  module.exports = PreProvision;
+module.exports = PreProvision;

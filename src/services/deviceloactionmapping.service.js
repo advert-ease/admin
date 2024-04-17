@@ -1,26 +1,34 @@
 const DeviceLocationMapping = require('../models/device_location_mapping');
 
 // Service function for inserting a new device location mapping
-exports.insertDeviceLocationMapping = async (data) => {
+exports.insertDeviceloaction = async (itemData) => {
   try {
-    return await DeviceLocationMapping.create(data);
+    const newlocation= await DeviceLocationMapping.create(itemData);
+    return newlocation;
   } catch (error) {
-    throw new Error('Error while inserting device location mapping');
+    throw new Error(error.message);
   }
 };
 
 // Service function for updating an existing device location mapping
-exports.updateDeviceLocationMapping = async (id, data) => {
+exports.updateloactionmapping = async (itemId, updatedItemData) => {
   try {
-    const [rowsUpdated] = await DeviceLocationMapping.update(data, {
-      where: { Sl_no: id }
+    const [updatedRowsCount] = await DeviceLocationMapping.update(updatedItemData, {
+      where: { SL_NO: itemId }, // Target item by its ID
     });
-    if (rowsUpdated === 0) {
-      throw new Error('Device location mapping not found');
+
+    // Check if any rows were updated
+    if (updatedRowsCount === 0) {
+      // If no rows were updated, throw an error indicating the item was not found or no changes were applied
+      throw new Error('Item not found or no changes applied.');
     }
-    return rowsUpdated;
+
+    // If rows were updated, fetch and return the updated item
+    const updatedItem = await DeviceLocationMapping.findByPk(itemId);
+    return updatedItem;
   } catch (error) {
-    throw new Error('Error while updating device location mapping');
+    // If an error occurs during the update operation, re-throw the error with a descriptive message
+    throw new Error(error.message);
   }
 };
 

@@ -1,5 +1,67 @@
-// controllers/locationController.js
-const locationService = require('../services/locationmaster.service');
+
+// controllers/locationMasterController.js
+const locationMasterService = require('../services/locationmaster.service');
+
+exports.createLocation = async (req, res) => {
+  try {
+    const locationData = req.body;
+    const location = await locationMasterService.createLocationmaster(locationData);
+    res.status(201).json(location);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+exports.updateLocation = async (req, res) => {
+  try {
+      const LocationId = req.params.id;
+      const updatedlocationData = req.body;
+      const updatedlocation = await locationMasterService.updateLocation(LocationId, updatedlocationData);
+      res.status(200).json(updatedlocation);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getLocation = async (req, res) => {
+  try {
+    const location = await locationMasterService.getLocation(req.params.id);
+    if (location) {
+      res.status(200).json(location);
+    } else {
+      res.status(404).json({ message: 'Location not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+exports.getLocation = async (req, res) => {
+  try {
+      const alllocation = await locationMasterService.getLocation();
+      res.status(200).json(alllocation);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getlocationById = async (req, res) => {
+  try {
+      const locationId = req.params.id;
+      const location = await vendorService.getlocationById(locationId);
+      if (!location) {
+          res.status(404).json({ message: 'location not found' });
+          return;
+      }
+      res.status(200).json(location);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
 /*
 exports.createLocation = async (req, res) => {
   try {
@@ -10,7 +72,7 @@ exports.createLocation = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-*/
+
 
 
 
@@ -55,4 +117,5 @@ exports.getLocations = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+*/
 

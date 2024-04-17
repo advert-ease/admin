@@ -4,12 +4,12 @@ const locationRouter = require('./src/routes/locationmaster.route');
 const sequelize = require('./src/models/dbconnection');
 const app = express();
 
-const cors = require('cors');
+//const cors = require('cors');
 
 
 
 // Use CORS middleware
-app.use(cors());
+//app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,5 +1,55 @@
 // services/locationService.js
-const Location = require('../models/location_master');
+
+const LocationMaster = require('../models/location_master');
+
+
+
+
+exports.createLocationmaster = async (locationData) => {
+  try {
+      const loc = await LocationMaster.create(locationData);
+      return loc;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+};
+
+
+
+
+exports.updateLocation = async (LocationId, updatedlocationData) => {
+  try {
+      const [updatedRowsCount] = await LocationMaster.update(updatedlocationData, {
+          where: { Location_id: LocationId },
+      });
+      if (updatedRowsCount === 0) {
+          throw new Error('location not found or no changes applied.');
+      }
+      const updatedlocation = await LocationMaster.findByPk(LocationId);
+      return updatedlocation;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+};
+
+exports.getLocation = async () => {
+  try {
+      const alllocation = await LocationMaster.findAll();
+      return alllocation;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+};
+
+exports.getlocationById = async (vendorId) => {
+  try {
+      const location = await LocationMaster.findByPk(vendorId);
+      return location;
+  } catch (error) {
+      throw new Error(error.message);
+  }
+};
+
 /*
 exports.createLocation = async (name) => {
   try {
@@ -9,7 +59,7 @@ exports.createLocation = async (name) => {
     throw new Error(error.message);
   }
 };
-*/
+
 
 exports.updateLocation = async (id, name) => {
   try {
@@ -29,3 +79,4 @@ exports.createLocation = async (locationData) => {
       throw new Error(error.message);
     }
   };
+  */

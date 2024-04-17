@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/config'); 
+const sequelize = require('../models/dbconnection'); 
+const ItemMaster= require('./item_master');
+const PreProvision= require('./pre_provision');
 const PreProvisionItems = sequelize.define('PreProvisionItems', {
     Sl_no: {
       type: DataTypes.INTEGER,

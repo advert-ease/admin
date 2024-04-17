@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../models/dbconnection'); 
+const LocationMaster = require('./location_master');
+const PreProvision =require('./pre_provision_items') ;
 const DeviceLocationMapping = sequelize.define('DeviceLocationMapping', {
     Sl_no: {
       type: DataTypes.INTEGER,
@@ -32,7 +34,7 @@ const DeviceLocationMapping = sequelize.define('DeviceLocationMapping', {
       onUpdate: DataTypes.NOW
     }
   }, {
-    tableName: 'device_location_mapping', 
+    tableName: 'device_loaction_mapping', 
     timestamps: false 
   });
   
