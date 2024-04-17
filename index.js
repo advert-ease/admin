@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require("express");
-const locationRouter = require('./src/routes/locationmaster.route'); // Corrected import
+const locationRouter = require('./src/routes/locationmaster.route'); 
 const sequelize = require('./src/models/dbconnection');
 const app = express();
 
