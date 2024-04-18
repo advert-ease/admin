@@ -11,6 +11,7 @@ import {
   orderByKey,
   query,
   get,
+  remove,
 } from "firebase/database";
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
             devRest,
             switchChecked,
             UtcDev,
+            UtcEsp,
             colourStat;
           const idvlRef = ref(db, "pi_name-cha/" + item.key);
           const iddevRef = ref(db, "devices/" + item.key);
@@ -108,6 +110,9 @@ function App() {
               if (doc.key === "last_checked_time_dev") {
                 UtcDev = doc.val();
               }
+              if (doc.key === "last_checked_time_esp") {
+                UtcEsp = doc.val();
+              }
             });
           });
           newData.push({
@@ -123,6 +128,7 @@ function App() {
             switchChecked: switchChecked,
             colourStat: colourStat,
             UtcDev: UtcDev,
+            UtcEsp: UtcEsp,
           });
         });
         setData(newData);
@@ -326,8 +332,26 @@ function App() {
             // Data changed, reset duration and log green
 
             const db = getDatabase();
+            const dataLogRef = ref(db, `data_log/${newItem.name}`);
             let colourStatDev, colourStatEsp;
             const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+            onValue(dataLogRef, (snapshot) => {
+              snapshot.forEach((childSnapshot) => {
+                const fieldValue = childSnapshot.val();
+                if (fieldValue === "ad0-1") {
+                  const deviceRef = ref(db, `data_log/${newItem.name}`);
+                  remove(deviceRef)
+                    .then(() => {
+                      console.log(
+                        `Device ${newItem.name} removed successfully.`
+                      );
+                    })
+                    .catch((error) => {
+                      console.error("Error removing device:", error);
+                    });
+                }
+              });
+            });
             onValue(piChaRef, (snap) => {
               snap.forEach((doc) => {
                 if (doc.key === "statusColourDev") {
@@ -393,6 +417,8 @@ function App() {
             }
           });
           newData.forEach((newItem) => {
+            console.log(new Date(newItem.espLastSeen).getTime());
+            console.log(new Date(newItem.UtcEsp).getTime());
             const prevItem = previousData[newItem.name];
             if (
               (!prevItem || prevItem.lastSeen !== newItem.lastSeen) &&
