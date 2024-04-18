@@ -430,7 +430,12 @@ function App() {
               sameDataDurations[newItem.name] = 0;
               const db = getDatabase();
               const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-              const currentTimeUTCDev = new Date().toISOString();
+              const options = { timeZone: "Asia/Kolkata" };
+
+              const currentTimeUTCDev = new Date().toLocaleString(
+                "en-US",
+                options
+              );
               // Update espctr value directly
               update(piChaRef, {
                 statusColourDev: "0",
@@ -459,7 +464,12 @@ function App() {
                 // );
                 const db = getDatabase();
                 const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-                const currentTimeUTCDev = new Date().toISOString();
+                const options = { timeZone: "Asia/Kolkata" };
+
+                const currentTimeUTCDev = new Date().toLocaleString(
+                  "en-US",
+                  options
+                );
                 // Update espctr value directly
                 update(piChaRef, {
                   statusColourDev: "1",
@@ -480,7 +490,12 @@ function App() {
                 const db1 = getDatabase();
 
                 const piChaRef = ref(db1, `pi_name-cha/${newItem.name}`);
-                const currentTimeUTCDev = new Date().toISOString();
+                const options = { timeZone: "Asia/Kolkata" };
+
+                const currentTimeUTCDev = new Date().toLocaleString(
+                  "en-US",
+                  options
+                );
                 // Update espctr value directly
                 update(piChaRef, {
                   statusColourDev: "2",
@@ -513,7 +528,13 @@ function App() {
               ) {
                 const db = getDatabase();
                 const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-                const currentTimeUTCDev = new Date().toISOString();
+
+                const options = { timeZone: "Asia/Kolkata" };
+
+                const currentTimeUTCDev = new Date().toLocaleString(
+                  "en-US",
+                  options
+                );
                 // Update espctr value directly
                 update(piChaRef, {
                   statusColourDev: "3",
@@ -536,7 +557,13 @@ function App() {
               // );
               const db = getDatabase();
               const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-              const currentTimeUTCEsp = new Date().toISOString();
+              const options = { timeZone: "Asia/Kolkata" };
+
+              const currentTimeUTCEsp = new Date().toLocaleString(
+                "en-US",
+                options
+              );
+
               // Update espctr value directly
               update(piChaRef, {
                 statusColourEsp: "0",
@@ -560,7 +587,12 @@ function App() {
                 // );
                 const db = getDatabase();
                 const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-                const currentTimeUTCEsp = new Date().toISOString();
+                const options = { timeZone: "Asia/Kolkata" };
+
+                const currentTimeUTCEsp = new Date().toLocaleString(
+                  "en-US",
+                  options
+                );
                 // Update espctr value directly
                 update(piChaRef, {
                   statusColourEsp: "1",
@@ -581,7 +613,12 @@ function App() {
                 // );
                 const db = getDatabase();
                 const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-                const currentTimeUTCEsp = new Date().toISOString();
+                const options = { timeZone: "Asia/Kolkata" };
+
+                const currentTimeUTCEsp = new Date().toLocaleString(
+                  "en-US",
+                  options
+                );
                 // Update espctr value directly
                 update(piChaRef, {
                   statusColourEsp: "2",
@@ -601,7 +638,12 @@ function App() {
                 // );
                 const db = getDatabase();
                 const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
-                const currentTimeUTCEsp = new Date().toISOString();
+                const options = { timeZone: "Asia/Kolkata" };
+
+                const currentTimeUTCEsp = new Date().toLocaleString(
+                  "en-US",
+                  options
+                );
                 // Update espctr value directly
                 update(piChaRef, {
                   statusColourEsp: "3",
