@@ -516,9 +516,10 @@ function App() {
                 });
 
                 // Log the channel change action
-                update(ref(db, "data_log/" + newItem.name), {
+                update(ref(db, "change_log/" + newItem.name), {
                   changed_by: "admin",
                   action: `restarted device ${newItem.name}`,
+                  UpdatedTime: currentTimeUTCDev,
                 });
               } else if (
                 sameDataDurations[newItem.name] >= 15 &&
@@ -683,9 +684,12 @@ function App() {
     update(ref(db, "pi_name-cha/" + item.name), {
       channel: e.target.value,
     });
-    update(ref(db, "data_log/" + item.name), {
+    const options = { timeZone: "Asia/Kolkata" };
+    const ISTDateString = new Date().toLocaleString("en-US", options);
+    update(ref(db, "change_log/" + item.name), {
       changed_by: "admin",
       action: `Channel Changed from ${item.cha} to ${e.target.value}`,
+      UpdatedTime: ISTDateString,
     });
   };
 
@@ -700,16 +704,19 @@ function App() {
         const vid1StartTime = snapshot.val().start_time;
         console.log(vid1Data);
         console.log(e);
-
+        const options = { timeZone: "Asia/Kolkata" };
+        const ISTDateString = new Date().toLocaleString("en-US", options);
         await Promise.all([
           update(ref(db, "pi_name-cha/" + item.name), {
             URL: url,
             adid: vid1Data,
             start_time: vid1StartTime,
           }),
-          update(ref(db, "data_log/" + item.name), {
+
+          update(ref(db, "change_log/" + item.name), {
             changed_by: "admin",
             action: `URL changed from ${item.URL} to ${e.target.value}`,
+            UpdatedTime: ISTDateString,
           }),
         ]);
 
