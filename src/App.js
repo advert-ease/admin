@@ -407,15 +407,15 @@ function App() {
       fetchData1()
         .then((newData) => {
           console.log(newData);
-          newData.sort((a, b) => {
-            if (a.status === "online" && b.status !== "online") {
-              return -1; // a should come before b
-            } else if (a.status !== "online" && b.status === "online") {
-              return 1; // b should come before a
-            } else {
-              return 0; // no change in ordering
-            }
-          });
+          // newData.sort((a, b) => {
+          //   if (a.status === "online" && b.status !== "online") {
+          //     return -1; // a should come before b
+          //   } else if (a.status !== "online" && b.status === "online") {
+          //     return 1; // b should come before a
+          //   } else {
+          //     return 0; // no change in ordering
+          //   }
+          // });
           newData.forEach((newItem) => {
             console.log(new Date(newItem.espLastSeen).getTime());
             console.log(new Date(newItem.UtcEsp).getTime());
