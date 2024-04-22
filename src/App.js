@@ -283,7 +283,9 @@ function App() {
       devLastSeen,
       adName,
       chaName,
-      switchChecked
+      switchChecked,
+      text,
+      cha
     ) => {
       // Find the table row corresponding to the item name
       const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
@@ -294,6 +296,9 @@ function App() {
         const devTimeCell = tableRow.querySelector(".table-cell-dev");
         const adNameCell = tableRow.querySelector(".ad-name");
         const chaNameCell = tableRow.querySelector(".cha-name");
+        const thirdCell = document.querySelector(
+          `tr[data-name="${itemName}"] td:nth-child(4)`
+        );
         const switchESPCell = tableRow.querySelector(
           ".switch-cell .switch-esp"
         );
@@ -301,15 +306,19 @@ function App() {
         if (lastCell) {
           devTimeCell.textContent = devLastSeen;
           lastCell.style.backgroundColor = color;
+          lastCell.innerText = text;
           adNameCell.value = adName;
           chaNameCell.value = chaName;
+          thirdCell.style.backgroundColor = cha ? "purple" : "yellow";
+          thirdCell.style.color = cha ? "" : "black";
+          thirdCell.innerText = cha ? "AD Mode" : "TV Mode";
           if (switchESPCell) {
             switchESPCell.checked = switchChecked;
           }
         }
       }
     };
-    const updateTableESP = (itemName, color, espTime) => {
+    const updateTableESP = (itemName, color, espTime, text) => {
       // Find the table row corresponding to the item name
       const tableRow = document.querySelector(`tr[data-name="${itemName}"]`);
 
@@ -321,6 +330,7 @@ function App() {
         if (lastCell) {
           espTimeCell.textContent = espTime;
           lastCell.style.backgroundColor = color;
+          lastCell.innerText = text;
         }
       }
     };
@@ -335,6 +345,7 @@ function App() {
             const dataLogRef = ref(db, `data_log/${newItem.name}`);
             let colourStatDev, colourStatEsp;
             const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
+
             onValue(dataLogRef, (snapshot) => {
               snapshot.forEach((childSnapshot) => {
                 const fieldValue = childSnapshot.val();
@@ -352,6 +363,17 @@ function App() {
                 }
               });
             });
+
+            const chaRef = ref(db, "pi_cha-status");
+            let cha;
+            onValue(chaRef, (snap) => {
+              snap.forEach((doc) => {
+                if (doc.key === newItem.cha) {
+                  cha = doc.val();
+                }
+              });
+            });
+            console.log(cha);
             onValue(piChaRef, (snap) => {
               snap.forEach((doc) => {
                 if (doc.key === "statusColourDev") {
@@ -380,15 +402,38 @@ function App() {
                 : colourStatEsp == 2
                 ? "pink"
                 : "red";
+            let espText =
+              colourStatEsp == 0
+                ? "Active"
+                : colourStatEsp == 1
+                ? "Non Responsive"
+                : colourStatEsp == 2
+                ? "restarting"
+                : "Inactive";
+            let DevText =
+              colourStatDev == 0
+                ? "Active"
+                : colourStatDev == 1
+                ? "Non Responsive"
+                : colourStatDev == 2
+                ? "restarting"
+                : "Inactive";
             updateTableDevice(
               newItem.name,
               devCalcColour,
               newItem.lastSeen,
               newItem.ad,
               newItem.cha,
-              newItem.switchChecked
+              newItem.switchChecked,
+              DevText,
+              cha
             );
-            updateTableESP(newItem.name, espCalcColour, newItem.espLastSeen);
+            updateTableESP(
+              newItem.name,
+              espCalcColour,
+              newItem.espLastSeen,
+              espText
+            );
           });
         })
         .catch((error) => {
@@ -398,6 +443,7 @@ function App() {
 
     return () => clearInterval(fetchDataInterval);
   }, []);
+
   useEffect(() => {
     let previousData = {};
     let sameDataDurations = {};
@@ -678,8 +724,24 @@ function App() {
     });
   };
 
-  const handleChangeChannel = (item, e) => {
+  const handleChangeChannel = (item, e, index) => {
     const db = getDatabase();
+    const chaRef = ref(db, "pi_cha-status");
+    let cha;
+    onValue(chaRef, (snap) => {
+      snap.forEach((doc) => {
+        if (doc.key === e.target.value) {
+          cha = doc.val();
+        }
+      });
+    });
+    console.log(cha);
+    const chaCell = document.querySelector(`.color-cell-channel-${index}`);
+    if (chaCell) {
+      chaCell.style.backgroundColor = cha ? "purple" : "yellow";
+      chaCell.innerText = cha ? "AD Mode" : "TV Mode";
+      chaCell.style.color = cha ? "" : "black";
+    }
     // console.log(e.target.value);
     update(ref(db, "pi_name-cha/" + item.name), {
       channel: e.target.value,
@@ -841,6 +903,7 @@ function App() {
               <th>Device</th>
               <th>Restaurant</th>
               <th>Channel</th>
+              <th>Channel Status</th>
               <th>Ad</th>
               <th>Lastseen-device</th>
               <th>Lastseen-ESP</th>
@@ -860,13 +923,17 @@ function App() {
                   <select
                     // value={item.cha}
                     className="cha-name"
-                    onChange={(e) => handleChangeChannel(item, e)}
+                    onChange={(e) => handleChangeChannel(item, e, index)}
                   >
                     {channel.map((channelItem, index) => (
                       <option key={index}>{channelItem.name}</option>
                     ))}
                   </select>
                 </td>
+                <td
+                  style={{ width: "200", backgroundColor: "cyan" }}
+                  className={`color-cell-channel-${index}`}
+                ></td>
                 <td className="table-cell">
                   <select
                     className="ad-name"

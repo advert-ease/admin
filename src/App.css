@@ -79,6 +79,7 @@ tr:nth-child(odd){
   text-align: center;
   width: 200px;
 }
+
 .register{
   margin:5% 0 0 0;
   padding:1% 2%;
@@ -104,7 +105,7 @@ tr:nth-child(odd){
 /* The switch - the box around the slider */
 .switch {
   position: relative;
-  display: inline-block;
+  /* display: inline-block; */
   width: 60px;
   height: 34px;
 }
@@ -144,11 +145,11 @@ tr:nth-child(odd){
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #c8ff00;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #c8ff00;
 }
 
 input:checked + .slider:before {
