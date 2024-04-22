@@ -1,55 +1,56 @@
 
 const VendorDetails = require('../models/vendor_details');
 const ItemMaster = require('../models/item_master');
+const itemService = require('../services/itemmaster.services');
 
-exports.createItem = async (itemData) => {
+
+
+exports.createItem = async (req, res) => {
   try {
-    const newItem = await ItemMaster.create(itemData);
-    return newItem;
+    const newItem = await itemService.createItem(req.body);
+    res.status(201).json(newItem);
   } catch (error) {
-    throw new Error(error.message);
+    res.status(500).json({ error: error.message });
   }
 };
 
-exports.updateItem = async (itemId, updatedItemData) => {
-  try {
-    // Update the item based on the provided item ID
-    const [updatedRowsCount] = await ItemMaster.update(updatedItemData, {
-      where: { SL_NO: itemId }, // Target item by its ID
-    });
 
-    // Check if any rows were updated
-    if (updatedRowsCount === 0) {
-      // If no rows were updated, throw an error indicating the item was not found or no changes were applied
-      throw new Error('Item not found or no changes applied.');
+
+exports.updateItem = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const updatedItemData = req.body;
+    const updatedItem = await itemService.updateItem(itemId, updatedItemData);
+    res.status(200).json(updatedItem);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.getAllItems = async (req, res) => {
+  try {
+    const allItems = await itemService.getAllItems();
+    res.status(200).json(allItems);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.getItemById = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const item = await itemService.getItemById(itemId);
+    if (!item) {
+      res.status(404).json({ message: 'Item not found' });
+      return;
     }
-
-    // If rows were updated, fetch and return the updated item
-    const updatedItem = await ItemMaster.findByPk(itemId);
-    return updatedItem;
+    res.status(200).json(item);
   } catch (error) {
-    // If an error occurs during the update operation, re-throw the error with a descriptive message
-    throw new Error(error.message);
+    res.status(500).json({ error: error.message });
   }
 };
 
 
 
-
-exports.getAllItems = async () => {
-  try {
-    const allItems = await ItemMaster.findAll();
-    return allItems;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-exports.getItemById = async (itemId) => {
-  try {
-    const item = await item.findByPk(itemId);
-    return item;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
