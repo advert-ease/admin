@@ -10,7 +10,7 @@ const DeviceLocationMapping = sequelize.define('DeviceLocationMapping', {
     },
     Location_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: LocationMaster,
         key: 'Location_id'
@@ -26,7 +26,7 @@ const DeviceLocationMapping = sequelize.define('DeviceLocationMapping', {
     },
     Installation_date: {
       type: DataTypes.DATEONLY,
-      allowNull: true
+      allowNull: false
     },
     Last_modified_date: {
       type: DataTypes.DATE,
@@ -34,7 +34,7 @@ const DeviceLocationMapping = sequelize.define('DeviceLocationMapping', {
       onUpdate: DataTypes.NOW
     }
   }, {
-    tableName: 'device_loaction_mapping', 
+    tableName: 'device_location_mapping', 
     timestamps: false 
   });
   

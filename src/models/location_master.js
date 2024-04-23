@@ -8,31 +8,31 @@ const LocationMaster = sequelize.define('LocationMaster', {
     },
     Location_name: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     Contact_no: {
       type: DataTypes.STRING(20),
-      allowNull: true
+      allowNull: false
     },
     Location_address: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     Pincode: {
       type: DataTypes.STRING(10),
-      allowNull: true
+      allowNull: false
     },
     Loc_gst_no: {
       type: DataTypes.STRING(15),
-      allowNull: true
+      allowNull: false
     },
     Location_type: {
       type: DataTypes.STRING(50),
-      allowNull: true
+      allowNull: false
     },
     status: {
       type: DataTypes.BOOLEAN,
-      allowNull: true
+      allowNull: false
     },
     Creation_date: {
       type: DataTypes.DATE,
@@ -45,7 +45,7 @@ const LocationMaster = sequelize.define('LocationMaster', {
     },
     location_email_id: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     }
   }, {
     tableName: 'location_master', 

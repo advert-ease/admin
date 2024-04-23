@@ -9,31 +9,31 @@ const ItemMaster = sequelize.define('ItemMaster', {
     },
     item_code: {
       type: DataTypes.STRING(50),
-      allowNull: true
+      allowNull: false
     },
     Item_name: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     Sku_no: {
       type: DataTypes.STRING(50),
-      allowNull: true
+      allowNull: false
     },
     Unit: {
       type: DataTypes.STRING(50),
-      allowNull: true
+      allowNull: false
     },
     Quantity: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     },
     Purchase_rate_item: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: true
+      allowNull: false
     },
     Total_purchase_rate: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: true
+      allowNull: false
     },
     vendor_id: {
       type: DataTypes.INTEGER,
@@ -45,11 +45,11 @@ const ItemMaster = sequelize.define('ItemMaster', {
     },
     Purchase_date: {
       type: DataTypes.DATEONLY,
-      allowNull: true
+      allowNull: false
     },
     Description: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: false
     },
     Creation_date: {
       type: DataTypes.DATE,
@@ -62,7 +62,7 @@ const ItemMaster = sequelize.define('ItemMaster', {
     },
     current_stock: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     }
   }, {
     tableName: 'item_master', 

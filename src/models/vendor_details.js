@@ -10,35 +10,35 @@ const VendorDetails = sequelize.define('VendorDetails', {
   },
   Vendor_name: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: false
   },
   Contact_no: {
     type: DataTypes.STRING(20),
-    allowNull: true
+    allowNull: false
   },
   email_id: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: false
   },
   vendor_address: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: false
   },
   City: {
     type: DataTypes.STRING(100),
-    allowNull: true
+    allowNull: false
   },
   State: {
     type: DataTypes.STRING(100),
-    allowNull: true
+    allowNull: false
   },
   Gst_no: {
     type: DataTypes.STRING(15),
-    allowNull: true
+    allowNull: false
   },
   status: {
     type: DataTypes.BOOLEAN,
-    allowNull: true
+    allowNull: false
   },
   Creation_date: {
     type: DataTypes.DATE,
