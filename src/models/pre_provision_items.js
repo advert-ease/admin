@@ -26,7 +26,7 @@ const PreProvisionItems = sequelize.define('PreProvisionItems', {
     },
     Quantity: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     }
   }, {
     tableName: 'Pre_provision_items', 
