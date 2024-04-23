@@ -1,54 +1,47 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-@font-face {
-  font-family: "Poppins";
-  src: url("../src/Font/Poppins-Regular.ttf") format("truetype");
-  /* Add other font properties as needed */
-}
-body {
-  font-family: "Poppins", sans-serif;
-}
-/* body{
-  background-color: rgb(226, 217, 217);
-  color:black
-} */
 
-.switch-div {
+.switch-div{
   position: relative;
   display: flex;
   padding-top: 50px;
   padding-left: 40px;
   background-color: transparent;
+  
 }
-.switch-cell {
+.switch-cell{
   display: flex;
   justify-content: center;
   align-items: center;
   height: 8vh;
   background-color: transparent;
+  
+ 
 }
 /* .sec-table{
   /* padding:1%; */
+  
+  
+  /* border-collapse: collapse; */
+  
+ 
 
-/* border-collapse: collapse; */
-
-.main-table {
+.main-table{
   /* padding:1%; */
   /* border:2px solid grey; */
   background-color: white;
   border-radius: 12px;
   /* border-collapse: collapse; */
-  width: 95%;
+  width:95%;
   padding: 20px;
   /* text-align: center; */
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-h1 {
+h1{
   width: 100%;
+    
 }
+
 
 /* .table-row{
   padding:100px;
@@ -61,18 +54,21 @@ select{
   width:100%;
 } */
 
-.switch {
-  background-color: #e7e7e7;
-  color: black;
+
+
+.switch{
+  background-color: #E7E7E7;
+  color:black;
   cursor: pointer;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 6px;
-}
+  
+} 
 
-.color-cell {
+ .color-cell{
   background-color: white;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -80,31 +76,33 @@ select{
   font-weight: 700;
   text-align: center;
   width: 150px;
-  opacity: 0.6;
-}
+ opacity:0.6;
+  
+  
+} 
 
-.color-cell-esp {
+.color-cell-esp{
   background-color: white;
   padding-top: 5px;
   padding-bottom: 5px;
   font-weight: 700;
   border-radius: 6px;
-
+ 
   text-align: center;
   width: 150px;
-  opacity: 0.4;
+  opacity:0.6;
   /* border: 2px solid rgba(255,0,0,1 ); */
 }
-.register {
-  margin: 5% 0 0 0;
-  padding: 1% 2%;
-  font-size: 20px;
+.register{
+  margin:5% 0 0 0;
+  padding:1% 2%;
+  font-size:20px;
   cursor: pointer;
   background-color: #f3f0f0;
-  color: black;
+  color:black;
   border-radius: 6px;
 }
-.register-div {
+.register-div{
   text-align: start;
   padding-top: 20px;
 }
@@ -125,6 +123,7 @@ select{
   /* display: inline-block; */
   width: 60px;
   height: 34px;
+  
 }
 
 /* Hide default HTML checkbox */
@@ -163,18 +162,18 @@ select{
 }
 
 input:checked + .slider {
-  background-color: #2196f3;
+  background-color: #2196F3;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196f3;
+  box-shadow: 0 0 1px #2196F3;
 }
 
 input:checked + .slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);
-}
+} 
 /* .header {
   font-family: sans-serif;
   color: rgb(186, 184, 184);
