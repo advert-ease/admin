@@ -52,6 +52,20 @@ export function ItemMaster() {
       date: value,
     });
   };
+  const handleVendor = (e) => {
+    const { value } = e.target;
+    setItemData({
+      ...ItemData,
+      purchaseVendor: value,
+    });
+  };
+  const handleUnit = (e) => {
+    const { value } = e.target;
+    setItemData({
+      ...ItemData,
+      unit: value,
+    });
+  };
   const handleChangeNum = (e) => {
     const { name, value } = e.target;
     // Validate input to accept only numerical characters
@@ -81,7 +95,25 @@ export function ItemMaster() {
   // };
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     try {
+      event.preventDefault();
+
+      // Check if all mandatory fields are filled
+      if (
+        !ItemData.itemCode ||
+        !ItemData.itemName ||
+        !ItemData.sku ||
+        !ItemData.quantity ||
+        !ItemData.unit ||
+        !ItemData.purchaseRate ||
+        !ItemData.purchaseVendor ||
+        !ItemData.date ||
+        !ItemData.description
+      ) {
+        alert("Please fill in all mandatory fields.");
+        return;
+      }
       // Display confirmation dialog to the user
       const isConfirmed = window.confirm("Are you sure you want to save this?");
       if (isConfirmed) {
@@ -162,6 +194,7 @@ export function ItemMaster() {
               id="itemCode"
               name="itemCode"
               value={ItemData.itemCode}
+              onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             />
           </div>
@@ -229,12 +262,13 @@ export function ItemMaster() {
               id="unit"
               name="unit"
               value={ItemData.unit}
+              onChange={handleUnit}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             >
               <option value="">Choose Unit</option>
-              <option value="">Unit 1</option>
-              <option value="">Unit 2</option>
-              <option value="">Unit 3</option>
+              <option value="u_1">Unit 1</option>
+              <option value="u_2">Unit 2</option>
+              <option value="u_3">Unit 3</option>
             </select>
           </div>
 
@@ -266,12 +300,13 @@ export function ItemMaster() {
                 id="purchaseVendor"
                 name="purchaseVendor"
                 value={ItemData.purchaseVendor}
+                onChange={handleVendor}
                 className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
               >
                 <option value="">Choose Vendor</option>
-                <option value="">Vendor 1</option>
-                <option value="">Vendor 2</option>
-                <option value="">Vendor 3</option>
+                <option value="v_1">Vendor 1</option>
+                <option value="v_2">Vendor 2</option>
+                <option value="v_3">Vendor 3</option>
               </select>
             </div>
             <Tooltip title="Add vendor">
@@ -412,7 +447,7 @@ export function ItemMaster() {
                 type="date"
                 id="purchaseDate"
                 name="purchaseDate"
-                value={ItemData.purchaseDate}
+                value={ItemData.date}
                 onChange={handleDateChange}
                 className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
               />

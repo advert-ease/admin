@@ -51,10 +51,36 @@ export function Vendors() {
   // };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setItemData({
-      ...ItemData,
-      [name]: value,
-    });
+    // Validate input to accept only alphanumeric characters
+    const alphanumericRegex = /^[a-zA-Z0-9\s]*$/;
+    if (alphanumericRegex.test(value)) {
+      setItemData({
+        ...ItemData,
+        [name]: value,
+      });
+    }
+  };
+  const handleChangeNum = (e) => {
+    const { name, value } = e.target;
+    // Validate input to accept only numerical characters
+    const numericRegex = /^[0-9]*$/;
+    if (numericRegex.test(value)) {
+      setItemData({
+        ...ItemData,
+        [name]: value,
+      });
+    }
+  };
+  const handleChangeAlp = (e) => {
+    const { name, value } = e.target;
+    // Validate input to accept only alphabetical characters
+    const alphabeticRegex = /^[a-zA-Z\s]*$/;
+    if (alphabeticRegex.test(value)) {
+      setItemData({
+        ...ItemData,
+        [name]: value,
+      });
+    }
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -154,7 +180,7 @@ export function Vendors() {
                     placeholder="Enter Vendor Name"
                     name="vendorName"
                     value={ItemData.vendorName}
-                    onChange={handleChange}
+                    onChange={handleChangeAlp}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#E6F1FF]"
                   />
                 </div>
@@ -172,7 +198,7 @@ export function Vendors() {
                     placeholder="Enter Contact Number"
                     name="contactNumber"
                     value={ItemData.contactNumber}
-                    onChange={handleChange}
+                    onChange={handleChangeNum}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#E6F1FF]"
                   />
                 </div>
@@ -187,7 +213,7 @@ export function Vendors() {
                     placeholder="Enter State"
                     name="state"
                     value={ItemData.state}
-                    onChange={handleChange}
+                    onChange={handleChangeAlp}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#E6F1FF]"
                   />
                 </div>
@@ -202,7 +228,7 @@ export function Vendors() {
                     placeholder="Enter City"
                     name="city"
                     value={ItemData.city}
-                    onChange={handleChange}
+                    onChange={handleChangeAlp}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#E6F1FF]"
                   />
                 </div>

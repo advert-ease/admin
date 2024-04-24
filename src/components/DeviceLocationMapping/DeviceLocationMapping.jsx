@@ -30,11 +30,37 @@ export function DeviceLocationMapping() {
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setItemData({
-      ...ItemData,
-      [name]: value,
-    });
+    // Validate input to accept only alphanumeric characters
+    const alphanumericRegex = /^[a-zA-Z0-9\s]*$/;
+    if (alphanumericRegex.test(value)) {
+      setItemData({
+        ...ItemData,
+        [name]: value,
+      });
+    }
   };
+  // const handleChangeNum = (e) => {
+  //   const { name, value } = e.target;
+  //   // Validate input to accept only numerical characters
+  //   const numericRegex = /^[0-9]*$/;
+  //   if (numericRegex.test(value)) {
+  //     setItemData({
+  //       ...ItemData,
+  //       [name]: value,
+  //     });
+  //   }
+  // };
+  // const handleChangeAlp = (e) => {
+  //   const { name, value } = e.target;
+  //   // Validate input to accept only alphabetical characters
+  //   const alphabeticRegex = /^[a-zA-Z\s]*$/;
+  //   if (alphabeticRegex.test(value)) {
+  //     setItemData({
+  //       ...ItemData,
+  //       [name]: value,
+  //     });
+  //   }
+  // };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
