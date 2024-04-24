@@ -30,13 +30,17 @@ export function ItemMaster() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const [showCalendar, setShowCalendar] = useState(false);
+  // const [showCalendar, setShowCalendar] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setItemData({
-      ...ItemData,
-      [name]: value,
-    });
+    // Validate input to accept only alphanumeric characters
+    const alphanumericRegex = /^[a-zA-Z0-9\s]*$/;
+    if (alphanumericRegex.test(value)) {
+      setItemData({
+        ...ItemData,
+        [name]: value,
+      });
+    }
   };
   // const handleCalendarClick = () => {
   //   setShowCalendar(!showCalendar);
@@ -47,6 +51,28 @@ export function ItemMaster() {
       ...ItemData,
       date: value,
     });
+  };
+  const handleChangeNum = (e) => {
+    const { name, value } = e.target;
+    // Validate input to accept only numerical characters
+    const numericRegex = /^[0-9]*$/;
+    if (numericRegex.test(value)) {
+      setItemData({
+        ...ItemData,
+        [name]: value,
+      });
+    }
+  };
+  const handleChangeAlp = (e) => {
+    const { name, value } = e.target;
+    // Validate input to accept only alphabetical characters
+    const alphabeticRegex = /^[a-zA-Z\s]*$/;
+    if (alphabeticRegex.test(value)) {
+      setItemData({
+        ...ItemData,
+        [name]: value,
+      });
+    }
   };
   // const handleSubmit = (e) => {
   //   e.preventDefault();
@@ -115,7 +141,7 @@ export function ItemMaster() {
 
   return (
     <section className="px-[2vw] py-[4vh] w-[100vw]">
-      <div className="  w-full pr-[35vw] bg-white rounded-[30px] px-[4.4vw] py-[3vh] shadow-md  ">
+      <div className="  w-full pr-[35vw] bg-white rounded-[30px] px-[4.4vw] py-[2vh] shadow-md  ">
         <div>
           <h1 className=" font-semibold text-[24px] text-[#5932EA] py-[1.7vh]">
             Item Master
@@ -126,7 +152,7 @@ export function ItemMaster() {
         </div>
 
         <div className="  grid grid-cols-3 py-[1.5vh]">
-          <div className="mb-4 py-[]">
+          <div className="mb-4 ">
             <label htmlFor="itemCode" className="block mb-1 font-semibold">
               Item Code:
               <span className="text-red-500">*</span>
@@ -136,7 +162,6 @@ export function ItemMaster() {
               id="itemCode"
               name="itemCode"
               value={ItemData.itemCode}
-              onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             />
           </div>
@@ -149,6 +174,7 @@ export function ItemMaster() {
               type="text"
               id="itemName"
               name="itemName"
+              placeholder="Enter Item Name"
               value={ItemData.itemName}
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
@@ -189,7 +215,7 @@ export function ItemMaster() {
               placeholder="Enter the Quantity"
               name="quantity"
               value={ItemData.quantity}
-              onChange={handleChange}
+              onChange={handleChangeNum}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             />
           </div>
@@ -203,7 +229,6 @@ export function ItemMaster() {
               id="unit"
               name="unit"
               value={ItemData.unit}
-              onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             >
               <option value="">Choose Unit</option>
@@ -224,7 +249,7 @@ export function ItemMaster() {
               placeholder="Enter the Rate"
               name="purchaseRate"
               value={ItemData.purchaseRate}
-              onChange={handleChange}
+              onChange={handleChangeNum}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             />
           </div>
@@ -241,7 +266,6 @@ export function ItemMaster() {
                 id="purchaseVendor"
                 name="purchaseVendor"
                 value={ItemData.purchaseVendor}
-                onChange={handleChange}
                 className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
               >
                 <option value="">Choose Vendor</option>
@@ -279,7 +303,7 @@ export function ItemMaster() {
                         placeholder="Enter Vendor Name"
                         name="vendorName"
                         value={ItemData.vendorName}
-                        onChange={handleChange}
+                        onChange={handleChangeAlp}
                         className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
                       />
                     </div>
@@ -297,7 +321,7 @@ export function ItemMaster() {
                         placeholder="Enter Contact Number"
                         name="contactNumber"
                         value={ItemData.contactNumber}
-                        onChange={handleChange}
+                        onChange={handleChangeNum}
                         className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
                       />
                     </div>
@@ -315,7 +339,7 @@ export function ItemMaster() {
                         placeholder="Enter State"
                         name="state"
                         value={ItemData.state}
-                        onChange={handleChange}
+                        onChange={handleChangeAlp}
                         className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
                       />
                     </div>
@@ -333,7 +357,7 @@ export function ItemMaster() {
                         placeholder="Enter City"
                         name="city"
                         value={ItemData.city}
-                        onChange={handleChange}
+                        onChange={handleChangeAlp}
                         className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
                       />
                     </div>

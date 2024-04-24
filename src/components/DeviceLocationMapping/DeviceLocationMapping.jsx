@@ -2,11 +2,13 @@
 // import { SearchOutlined } from "@ant-design/icons";
 // import { UserAddOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-import { vendorNames } from "../../Constants/VendorTableData";
+import TextArea from "antd/es/input/TextArea";
+
 import { Modal } from "antd";
 // import TextArea from "antd/es/input/TextArea";
 import React, { useEffect, useState } from "react";
 import { message, Popconfirm } from "antd";
+import { UserAddOutlined } from "@ant-design/icons";
 export function DeviceLocationMapping() {
   const [deviceloc, setDeviceloc] = useState([]);
   const confirm = (e) => {
@@ -58,14 +60,74 @@ export function DeviceLocationMapping() {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
+
   return (
     <section className="px-[2vw] py-[5vh] w-[100vw] ">
       <div className="bg-white rounded-[30px] w-auto h-auto shadow-xl py-[2vh] px-[4.4vw]">
         <div className="  bg-white rounded-xl flex justify-between">
-          <div>
+          <div className="flex gap-[45vw]">
             <h1 className=" font-semibold text-[24px] text-[#A31436] px-[2vw]">
               Device Location Mapping
             </h1>
+            <Button
+              icon={<UserAddOutlined />}
+              onClick={showModal}
+              className="bg-[#f1557a] hover:bg-[]"
+            >
+              Add Location Details
+            </Button>
+            <Modal
+              title="Add Details"
+              open={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
+            >
+              <div className="grid grid-cols-2 gap-5">
+                <div className="mb-4 ">
+                  <label
+                    htmlFor="locationName"
+                    className="block mb-1 font-semibold"
+                  >
+                    Location Name:
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="locationName"
+                    name="locationName"
+                    value={ItemData.locationName}
+                    onChange={handleChange}
+                    className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#f1557a]"
+                  >
+                    <option value="">Choose Location</option>
+                    <option value=""> 1</option>
+                    <option value=""> 2</option>
+                    <option value=""> 3</option>
+                  </select>
+                </div>
+
+                <div className="mb-4 ">
+                  <label
+                    htmlFor="deviceName"
+                    className="block mb-1 font-semibold"
+                  >
+                    Device Name:
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="deviceName"
+                    name="deviceName"
+                    value={ItemData.deviceName}
+                    onChange={handleChange}
+                    className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#f1557a]"
+                  >
+                    <option value="">Choose device</option>
+                    <option value=""> 1</option>
+                    <option value=""> 2</option>
+                    <option value=""> 3</option>
+                  </select>
+                </div>
+              </div>
+            </Modal>
             {/* <p className=" font-medium text-[18px] text-[#B5B7C0]">Names</p> */}
           </div>
           <div className="flex gap-5 justify-center items-center"></div>
