@@ -920,9 +920,9 @@ export function DeviceMonitoringTable() {
             </div>
         </form> */}
         </div>
-        <div className="div-1 flex flex-col justify-center items-center overflow-x-auto ">
-          <div className="overflow-auto">
-            <table className=" table-fixed">
+        <div className="overflow-x-scroll ">
+          <div className="">
+            <table className="">
               <tbody>
                 <tr className="border border-solid border-l-0 border-r-0 p-3 w-max">
                   <th className=" w-15 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
