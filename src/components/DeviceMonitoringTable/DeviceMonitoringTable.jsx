@@ -938,6 +938,9 @@ export function DeviceMonitoringTable() {
                     Channel Status
                   </th>
                   <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                    Advertisement
+                  </th>
+                  <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
                     Last Seen-Device
                   </th>
                   <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
