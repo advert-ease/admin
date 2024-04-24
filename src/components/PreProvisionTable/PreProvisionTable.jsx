@@ -7,6 +7,16 @@ export function PreProvisionTable() {
     device_id: "",
     deviceName: "",
   });
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleSelectChange = (e) => {
+    setSelectedItem(preProvTable.find((item) => item.id === e.target.value));
+  };
+  const preProvTable = [
+    { id: "1", name: "Box", qty: 50 },
+    { id: "2", name: "TV", qty: 20 },
+    { id: "3", name: "Phone", qty: 10 },
+    { id: "4", name: "Tab", qty: 70 },
+  ];
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -35,6 +45,52 @@ export function PreProvisionTable() {
       alert("Error saving location. Please try again.");
     }
   };
+  function RenderBasedOnQuantity({ qty, name }) {
+    return (
+      <div>
+        <h3 className="mb-[1vh]">
+          <span className="font-extrabold">Selected :</span>
+          {` ${qty} ${name}`}
+        </h3>
+        {[...Array(qty)].map((_, index) => (
+          <div className="flex mb-[5vh] gap-[2vw]">
+            <div className="flex">
+              <div className="flex justify-center items-center">
+                {index + 1}
+              </div>
+              <input
+                name={`item${index + 1}_device_id`}
+                className="border border-[#EA3232] rounded-md px-3 py-2 w-[15vw] bg-[#FFF0F0] ml-[1vw]"
+                key={index}
+                type="text"
+                placeholder={`Item ${index + 1} Device ID`}
+              />
+              <label
+                htmlFor={`item${index + 1}_device_id`}
+                className="mt-[-10px] font-medium ml-[0.5vw]"
+              >
+                <span className="text-red-500">*</span>
+              </label>
+            </div>
+            <div className="flex">
+              <input
+                className="border border-[#EA3232] rounded-md px-3 py-2 w-[15vw] bg-[#FFF0F0] "
+                key={index}
+                type="text"
+                placeholder={`Item ${index + 1} Device Name`}
+              />
+              <label
+                htmlFor={`item${index + 1}_device_id`}
+                className="mt-[-10px] font-medium ml-[0.5vw]"
+              >
+                <span className="text-red-500">*</span>
+              </label>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
   return (
     <section className="px-[2vw] py-[5vh] w-[100vw] ">
       <div className="bg-white rounded-[30px] w-auto h-auto shadow-xl py-[2vh] px-[4.4vw]">
@@ -46,28 +102,35 @@ export function PreProvisionTable() {
             Please fill In the details below
           </p>
         </div>
-        <div className="flex">
+        <div className="flex justify-between px-[2vw]">
           <div className="mb-4">
             <label
-              htmlFor="SelectItem"
-              className="block  font-bold text-gray-700"
+              htmlFor="items"
+              className="block  font-extrabold  text-gray-700"
             >
-              Select Item
+              Select Item :
             </label>
             <select
-              name="selectItem"
-              id="selectItem"
+              id="items"
+              onChange={handleSelectChange}
+              name="items"
               placeholder="Item Name"
               className="mt-1 p-2 w-[24.9vw] border border-[#EA3232]  bg-[#FFF0F0] rounded-md focus:outline-none focus:ring-[#EA3232] focus:border-[#EA3232]"
             >
-              <option value="">Select Item</option>
-              <option value="">phone</option>
-              <option value="">cable</option>
-              <option value="">band</option>
-              <option value="">electronics</option>
+              {preProvTable.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.qty} {item.name}
+                </option>
+              ))}
             </select>
           </div>
-          <table>
+          {selectedItem && (
+            <RenderBasedOnQuantity
+              qty={selectedItem.qty}
+              name={selectedItem.name}
+            />
+          )}
+          {/* <table>
             {preProvisionTable.map((link, index) => {
               return (
                 <div className="px-[13vw]">
@@ -108,52 +171,9 @@ export function PreProvisionTable() {
                     </div>
                   </div>
                 </div>
-                // <tr
-                //   key={index}
-                //   data-name={link.preProvisionTable}
-                //   className="border border-solid border-l-0 border-r-0 px-[10vw]"
-                // >
-                //   <td className="w-[10vw] p-3">{link.device_id}</td>
-                //   <td className="w-[10vw] p-3">{link.device_name}</td>
-                // </tr>
               );
             })}
-
-            {/* <div className="px-[13vw]">
-              <div className="flex gap-4">
-                <div className="mb-4 py-[]">
-                  <label htmlFor="device_id" className="block mb-1 font-medium">
-                    Device_id:
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="device_id"
-                    name="device_id"
-                    value={ItemData.device_id}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
-                  />
-                </div>
-
-                <div className="mb-4 py-[]">
-                  <label
-                    htmlFor="device_name"
-                    className="block mb-1 font-medium"
-                  >
-                    Device_name:
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="device_name"
-                    name="device_name"
-                    value={ItemData.device_name}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
-                  />
-                </div>
-              </div>
-            </div> */}
-          </table>
+          </table> */}
         </div>
         <div className="mb-4 px-[52vw] py-[2vh]">
           <button

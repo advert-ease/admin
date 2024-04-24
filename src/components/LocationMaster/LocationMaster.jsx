@@ -3,7 +3,7 @@ import TextArea from "antd/es/input/TextArea";
 import { SearchOutlined } from "@ant-design/icons";
 import { UserAddOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-// import { vendorNames } from "../../Constants/VendorTableData";
+import { vendorNames } from "../../Constants/VendorTableData";
 import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { message, Popconfirm } from "antd";
@@ -87,6 +87,12 @@ export function LocationMaster() {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtering function to match vendor names with the search query
+  const filteredLocationNames = vendorNames.filter((vendor) =>
+    vendor.vendorName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <section className="px-[2vw] py-[5vh] w-[100vw] ">
       <div className="bg-white rounded-[30px] w-auto h-auto shadow-xl py-[2vh] px-[4.4vw] overflow-auto">
@@ -100,6 +106,8 @@ export function LocationMaster() {
           <div className="flex gap-5 justify-center items-center">
             <div className="py-3">
               <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search here..."
                 prefix={<SearchOutlined />}
                 className="w-[15vw] h-[5vh] border border-[#DE7E0E]"
@@ -231,7 +239,7 @@ export function LocationMaster() {
                 </th>
               </tr>
 
-              {location.map((location) => (
+              {filteredLocationNames.map((location) => (
                 <tr key={location.location_id}>
                   {/* {vendorNames.map((link, index) => {
                 return (
@@ -240,12 +248,17 @@ export function LocationMaster() {
                     data-name={link.vendorName}
                     className="border border-solid border-l-0 border-r-0 px-[10vw]"
                   > */}
-                  <td className="w-[10vw] p-3">{location.Location_name}</td>
-                  <td>{location.Contact_no}</td>
+                  <td className="w-[10vw] p-3">{location.vendorName}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  {/* <td>{location.Contact_no}</td>
                   <td>{location.Pincode}</td>
                   <td>{location.Location_address}</td>
                   <td>{location.status}</td>
-                  <td></td>
+                  <td></td> */}
 
                   <td className="px-[3vh]">
                     <button>

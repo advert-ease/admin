@@ -2,7 +2,7 @@ import { Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { UserAddOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-// import { vendorNames } from "../../Constants/VendorTableData";
+import { vendorNames } from "../../Constants/VendorTableData";
 import { Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import React, { useEffect, useState } from "react";
@@ -100,6 +100,12 @@ export function Vendors() {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtering function to match vendor names with the search query
+  const filteredVendorNames = vendorNames.filter((vendor) =>
+    vendor.vendorName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <section className="px-[2vw] py-[5vh] w-[100vw] ">
       <div className="bg-white rounded-[30px] w-auto h-auto shadow-xl py-[2vh] px-[4.4vw]">
@@ -113,6 +119,8 @@ export function Vendors() {
           <div className="flex gap-5 justify-center items-center">
             <div className="py-3">
               <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search here..."
                 prefix={<SearchOutlined />}
                 className="w-[15vw] h-[5vh]"
@@ -251,10 +259,10 @@ export function Vendors() {
                 <th></th>
                 <th></th>
               </tr>
-              {vendor.map((vendor) => (
-                <tr key={vendor.vendor_id}>
-                  <td className="w-[30vw] p-3">{vendor.Vendor_name}</td>
-                  <td>{vendor.Contact_no}</td>
+              {filteredVendorNames.map((vendor) => (
+                <tr key={vendor.id}>
+                  <td className="w-[30vw] p-3">{vendor.vendorName}</td>
+                  {/* <td>{vendor.Contact_no}</td> */}
                   <td></td>
                   <td></td>
                   <td></td>
