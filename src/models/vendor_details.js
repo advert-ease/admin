@@ -2,58 +2,58 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../models/dbconnection');  
 
 const VendorDetails = sequelize.define('VendorDetails', {
-  vendor_id: {
+  vendorId: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true,
-    allowNull: true
+    autoIncrement: true
   },
-  Vendor_name: {
+  vendorName: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: false
   },
-  Contact_no: {
+  contactNo: {
     type: DataTypes.STRING(20),
-    allowNull: true
+    allowNull: false
   },
-  email_id: {
+  emailId: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: false
   },
-  vendor_address: {
+  vendorAddress: {
     type: DataTypes.STRING(255),
-    allowNull: true
+    allowNull: false
   },
-  City: {
+  city: {
     type: DataTypes.STRING(100),
-    allowNull: true
+    allowNull: false
   },
-  State: {
+  state: {
     type: DataTypes.STRING(100),
-    allowNull: true
+    allowNull: false
   },
-  Gst_no: {
+  gstNo: {
     type: DataTypes.STRING(15),
-    allowNull: true
+    allowNull: false
   },
   status: {
     type: DataTypes.BOOLEAN,
-    allowNull: true
+    allowNull: false
   },
-  Creation_date: {
+  creationDate: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-    allowNull: true
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   },
-  last_modified_date: {
+  lastModifiedDate: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-    onUpdate: DataTypes.NOW,
-    allowNull: true
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'vendor_details', 
-  timestamps: false 
+  tableName: 'vendor_details',
+  timestamps: false
 });
 
 module.exports = VendorDetails;
+
+module.exports = VendorDetails

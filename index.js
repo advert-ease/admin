@@ -1,8 +1,24 @@
 require('dotenv').config();
 const express = require("express");
-const locationRouter = require('./src/routes/itemmaster.route'); // Require the route directory
 const sequelize = require('./src/models/dbconnection');
 const app = express();
+
+
+
+const devicelocationRouter = require('./src/routes/deviceloactionmapping.route'); 
+const itemmasterRouter = require('./src/routes/itemmaster.route'); 
+const locationRouter = require('./src/routes/locationmaster.route'); 
+const preprovisionRouter = require('./src/routes/preprovision.route'); 
+const preprovisionitemsRouter = require('./src/routes//preprovisionitems.route');
+const vendorRouter = require('./src/routes/vendordetails.route');
+
+// Mount the location route
+  app.use('/api', devicelocationRouter);
+  app.use('/api', itemmasterRouter);
+  app.use('/api', locationRouter);
+  app.use('/api', preprovisionRouter);
+  app.use('/api', preprovisionitemsRouter);
+  app.use('/api', vendorRouter);
 
 // Middleware to parse JSON and URL-encoded bodies
 app.use(express.json());
@@ -10,8 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 8000;
 
-// Mount the location route
-app.use('/api', locationRouter); // Use the location router for requests to '/api'
+
+
 
 // Define a basic route for the root URL
 app.get('/', (req, res) => {

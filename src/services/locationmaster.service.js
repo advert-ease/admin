@@ -20,7 +20,7 @@ exports.createLocationmaster = async (locationData) => {
 exports.updateLocation = async (LocationId, updatedlocationData) => {
   try {
       const [updatedRowsCount] = await LocationMaster.update(updatedlocationData, {
-          where: { Location_id: LocationId },
+          where: { LocationId: LocationId },
       });
       if (updatedRowsCount === 0) {
           throw new Error('location not found or no changes applied.');

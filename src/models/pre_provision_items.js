@@ -1,37 +1,27 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../models/dbconnection'); 
-const ItemMaster= require('./item_master');
-const PreProvision= require('./pre_provision');
+const sequelize = require('../models/dbconnection');  
+
 const PreProvisionItems = sequelize.define('PreProvisionItems', {
-    Sl_no: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    item_sl_no: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: ItemMaster,
-        key: 'SL_NO'
-      }
-    },
-    device_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: PreProvision,
-        key: 'device_id'
-      }
-    },
-    Quantity: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    }
-  }, {
-    tableName: 'Pre_provision_items', 
-    timestamps: false 
-  });
-  
- 
-  module.exports = PreProvisionItems;
+  slNo: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  itemCode: {
+    type: DataTypes.STRING(255),
+    allowNull: false
+  },
+  deviceId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }
+}, {
+  tableName: 'pre_provision_items',
+  timestamps: false
+});
+
+module.exports = PreProvisionItems;

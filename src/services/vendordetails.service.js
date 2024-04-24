@@ -14,7 +14,7 @@ exports.createVendor = async (vendorData) => {
 exports.updateVendor = async (vendorId, updatedVendorData) => {
   try {
       const [updatedRowsCount] = await Vendor.update(updatedVendorData, {
-          where: { vendor_id: vendorId },
+          where: { vendorId: vendorId },
       });
       if (updatedRowsCount === 0) {
           throw new Error('Vendor not found or no changes applied.');

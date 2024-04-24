@@ -13,7 +13,7 @@ exports.createDeviceLocationMapping = async (mappingData) => {
 exports.updateDeviceLocationMapping = async (mappingId, updatedMappingData) => {
   try {
       const [updatedRowsCount] = await DeviceLocationMapping.update(updatedMappingData, {
-          where: { Sl_no: mappingId },
+          where: { SlNo: mappingId },
       });
       if (updatedRowsCount === 0) {
           throw new Error('Device Location Mapping not found or no changes applied.');

@@ -14,7 +14,7 @@ exports.createPreProvision = async (preProvisionData) => {
 exports.updatePreProvision = async (deviceId, updatedPreProvisionData) => {
   try {
       const [updatedRowsCount] = await PreProvision.update(updatedPreProvisionData, {
-          where: { device_id: deviceId },
+          where: { deviceId: deviceId },
       });
       if (updatedRowsCount === 0) {
           throw new Error('PreProvision data not found or no changes applied.');

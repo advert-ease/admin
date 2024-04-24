@@ -13,7 +13,7 @@ exports.updateItem = async (itemId, updatedItemData) => {
   try {
     // Update the item based on the provided item ID
     const [updatedRowsCount] = await item.update(updatedItemData, {
-      where: { SL_NO: itemId }, // Target item by its ID
+      where: { slNo: itemId }, // Target item by its ID
     });
 
     // Check if any rows were updated

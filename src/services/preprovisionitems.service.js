@@ -12,7 +12,7 @@ exports.createPreProvisionItem = async (itemData) => {
 exports.updatePreProvisionItem = async (slNo, updatedItemData) => {
   try {
       const [updatedRowsCount] = await PreProvisionItems.update(updatedItemData, {
-          where: { Sl_no: slNo },
+          where: { SlNo: slNo },
       });
       if (updatedRowsCount === 0) {
           throw new Error('PreProvision item not found or no changes applied.');
