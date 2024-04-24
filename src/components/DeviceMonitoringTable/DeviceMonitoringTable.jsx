@@ -341,13 +341,13 @@ export function DeviceMonitoringTable() {
       }
     };
 
+    const db = getDatabase();
     const fetchDataInterval = setInterval(() => {
       fetchData1()
         .then((newData) => {
           newData.forEach((newItem) => {
             // Data changed, reset duration and log green
 
-            const db = getDatabase();
             const dataLogRef = ref(db, `data_log/${newItem.name}`);
             let colourStatDev, colourStatEsp;
             const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
@@ -411,7 +411,7 @@ export function DeviceMonitoringTable() {
               colourStatEsp == 0
                 ? "Active"
                 : colourStatEsp == 1
-                ? "Non Responsive"
+                ? "Not Responding"
                 : colourStatEsp == 2
                 ? "restarting"
                 : "InActive";
@@ -419,7 +419,7 @@ export function DeviceMonitoringTable() {
               colourStatDev == 0
                 ? "Active"
                 : colourStatDev == 1
-                ? "Non Responsive"
+                ? "Not Responding"
                 : colourStatDev == 2
                 ? "restarting"
                 : "Inactive";
@@ -446,10 +446,6 @@ export function DeviceMonitoringTable() {
         });
     }, 5000);
 
-    return () => clearInterval(fetchDataInterval);
-  }, []);
-
-  useEffect(() => {
     let previousData = {};
     let sameDataDurations = {};
     let sameDataDurationsESP = {};
@@ -468,8 +464,8 @@ export function DeviceMonitoringTable() {
           //   }
           // });
           newData.forEach((newItem) => {
-            console.log(new Date(newItem.espLastSeen).getTime());
-            console.log(new Date(newItem.UtcEsp).getTime());
+            // console.log(new Date(newItem.espLastSeen).getTime());
+            // console.log(new Date(newItem.UtcEsp).getTime());
             const prevItem = previousData[newItem.name];
             if (
               (!prevItem || prevItem.lastSeen !== newItem.lastSeen) &&
@@ -479,7 +475,7 @@ export function DeviceMonitoringTable() {
             ) {
               // Data changed, reset duration and log green
               sameDataDurations[newItem.name] = 0;
-              const db = getDatabase();
+              // const db = getDatabase();
               const piChaRef = ref(db, `pi_name-cha/${newItem.name}`);
               const options = { timeZone: "Asia/Kolkata" };
 
@@ -713,10 +709,18 @@ export function DeviceMonitoringTable() {
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
-    }, 300000);
+    }, 7000);
 
-    return () => clearInterval(fetchDataInterval2);
+    return () => {
+      clearInterval(fetchDataInterval);
+      clearInterval(fetchDataInterval2);
+    };
   }, []);
+
+  // useEffect(() => {
+
+  //   return () =>;
+  // }, []);
 
   const handleChangeMode = (item) => {
     const db = getDatabase();
@@ -921,162 +925,168 @@ export function DeviceMonitoringTable() {
         </form> */}
         </div>
         <div className="overflow-x-scroll ">
-          <div className="">
-            <table className="">
-              <tbody>
-                <tr className="border border-solid border-l-0 border-r-0 p-3 w-max">
-                  <th className=" w-15 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
-                    Device
-                  </th>
-                  <th className=" w-20 p-4 text-lg  font-semibold tracking-wide text-left text-[#008767] ">
-                    Restaurant
-                  </th>
-                  <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767] ">
-                    Channel
-                  </th>
-                  <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
-                    Channel Status
-                  </th>
-                  <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
-                    Advertisement
-                  </th>
-                  <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
-                    Last Seen-Device
-                  </th>
-                  <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
-                    Last Seen-ESP
-                  </th>
-                  <th className="w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
-                    Device State
-                  </th>
-                  <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
-                    Device State ESP
-                  </th>
-                  <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
-                    Switch
-                  </th>
-                </tr>
-                {data.map((item, index) => (
-                  <tr
-                    key={index}
-                    // className={`table-row ${item.pinned ? "pinned" : ""}`}
-                    className="table-row border border-solid border-l-0 border-r-0"
-                    data-name={item.name}
-                  >
-                    <td className="table-cell p-3 text-sm text-gray-700 ">
-                      {item.name}
-                    </td>
-                    <td className="table-cell p-3 text-sm text-gray-700">
-                      {item.restaurantDev}
-                    </td>
-                    <td className="table-cell p-3 etxt-sm text-gray-700">
-                      <select
-                        // value={item.cha}
-                        className="cha-name"
-                        onChange={(e) => handleChangeChannel(item, e, index)}
-                      >
-                        {channel.map((channelItem, index) => (
-                          <option key={index}>{channelItem.name}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td
-                      style={{
-                        width: "200",
-                        backgroundColor: "white",
-                        textAlign: "center",
-                      }}
-                      className={`color-cell-channel-${index}`}
-                    ></td>
-                    <td className="table-cell p-3 text-sm text-gray-700">
-                      <select
-                        value={item.ad}
-                        className="ad-name"
-                        onChange={(e) => handleChangeUrl(item, e)}
-                      >
-                        {allAdds.map((addItem, index) => (
-                          <option key={index}>{addItem}</option>
-                        ))}
-                      </select>
-                    </td>
+          <div className="w-full flex justify-center">
+            <div className="">
+              <table className="">
+                <tbody>
+                  <tr className="border border-solid border-l-0 border-r-0 p-3 w-max">
+                    <th className=" w-15 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                      Device
+                    </th>
+                    <th className=" w-20 p-4 text-lg  font-semibold tracking-wide text-left text-[#008767] ">
+                      Location
+                    </th>
+                    <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767] ">
+                      Channel
+                    </th>
+                    <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                      Channel Status
+                    </th>
+                    <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                      Advertisement
+                    </th>
+                    <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                      Last Seen-Device
+                    </th>
+                    <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                      Last Seen-ESP
+                    </th>
+                    <th className="w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                      Device State
+                    </th>
+                    <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                      Device State ESP
+                    </th>
+                    <th className=" w-20 p-4 text-lg font-semibold tracking-wide text-left text-[#008767]">
+                      Switch
+                    </th>
+                  </tr>
+                  {data.map((item, index) => (
+                    <tr
+                      key={index}
+                      // className={`table-row ${item.pinned ? "pinned" : ""}`}
+                      className="table-row border border-solid border-l-0 border-r-0"
+                      data-name={item.name}
+                    >
+                      <td className="table-cell p-3 text-sm text-gray-700 ">
+                        {item.name}
+                      </td>
+                      <td className="table-cell p-3 text-sm text-gray-700">
+                        {item.restaurantDev}
+                      </td>
+                      <td className="table-cell p-3 etxt-sm text-gray-700">
+                        <select
+                          // value={item.cha}
+                          className="cha-name"
+                          onChange={(e) => handleChangeChannel(item, e, index)}
+                        >
+                          {channel.map((channelItem, index) => (
+                            <option key={index}>{channelItem.name}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td
+                        style={{
+                          width: "200",
+                          backgroundColor: "white",
+                          textAlign: "center",
+                        }}
+                        className={`color-cell-channel-${index}`}
+                      ></td>
+                      <td className="table-cell p-3 text-sm text-gray-700">
+                        <select
+                          value={item.ad}
+                          className="ad-name"
+                          onChange={(e) => handleChangeUrl(item, e)}
+                        >
+                          {allAdds.map((addItem, index) => (
+                            <option key={index}>{addItem}</option>
+                          ))}
+                        </select>
+                      </td>
 
-                    <td className="table-cell-dev p-3 text-sm text-gray-700">
-                      {item.lastSeen}
-                    </td>
-                    <td className="table-cell-esp p-3 text-sm text-gray-700">
-                      {item.espLastSeen}
-                    </td>
-                    <td className=" p-4">
-                      <div className="color-cell"></div>
-                    </td>
-                    <td className=" p-4">
-                      <div className="color-cell-esp"></div>
-                    </td>
+                      <td className="table-cell-dev p-3 text-sm text-gray-700">
+                        {item.lastSeen}
+                      </td>
+                      <td className="table-cell-esp p-3 text-sm text-gray-700">
+                        {item.espLastSeen}
+                      </td>
+                      <td className=" p-4">
+                        <div className="color-cell"></div>
+                      </td>
+                      <td className=" p-4">
+                        <div className="color-cell-esp"></div>
+                      </td>
 
-                    <td className="switch-cell bg-transparent">
-                      <label className="switch-main-table flex">
-                        <input
-                          type="checkbox"
-                          checked={item.espctr}
-                          onChange={(e) =>
-                            handleSwitchToggle(item.name, e.target.checked)
-                          }
-                          disabled={loading}
-                          className="switch-esp"
-                        />
-                        <span className="slider round"></span>
-                      </label>
-                    </td>
-                    {/* <td className="pin-cell">
+                      <td className="switch-cell bg-transparent">
+                        <label className="switch-main-table flex">
+                          <input
+                            type="checkbox"
+                            checked={item.espctr}
+                            onChange={(e) =>
+                              handleSwitchToggle(item.name, e.target.checked)
+                            }
+                            disabled={loading}
+                            className="switch-esp"
+                          />
+                          <span className="slider round"></span>
+                        </label>
+                      </td>
+                      {/* <td className="pin-cell">
                   <button onClick={() => handlePinToggle(item)}>
                     {item.pinned ? "Unpin" : "Pin"}
                   </button>
                 </td> */}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {/* <RegisterDevice /> */}
-          {/* <ChannelTable /> */}
-          <div className="div-1 flex flex-col  bg-slate-50 rounded-xl  mt-7 w-[40%]  justify-center items-center shadow-xl overflow-x-auto">
-            <h1 className=" font-bold text-[25px] pl-[50px] justify-center items-center p-5">
-              CHANNEL TABLE
-            </h1>
-            <div className="overflow-auto rounded-[20px] ">
-              <table className="sec-table   rounded-xl justify-center items-center table-fixed">
-                <tr className="border border-solid border-l-0 border-r-0 p-3 ">
-                  <th className="p-4 text-[18px] font-semibold tracking-wide text-left text-gray-400 px-16 pr-6">
-                    Channel
-                  </th>
-                  <th className="p-4 text-[18px] font-semibold tracking-wide text-left text-gray-400 px-16">
-                    Mode
-                  </th>
-                  <th className="p-4 text-[18px] font-semibold tracking-wide text-left text-gray-400 px-16">
-                    Switch
-                  </th>
-                </tr>
-                {channel.map((item) => {
-                  return (
-                    <tr className="border border-solid border-l-0 border-r-0 py-[200px] ">
-                      <td className="table-cell px-16 py-[20px]">
-                        {item.name}
-                      </td>
-                      <td className="table-cell px-16">
-                        {item.mode ? "AD Mode" : "TV Mode"}
-                      </td>
-                      <td className="table-cell px-16">
-                        <button
-                          className="switch hover:shadow-md"
-                          onClick={() => handleChangeMode(item)}
-                        >
-                          Switch
-                        </button>
-                      </td>
                     </tr>
-                  );
-                })}
+                  ))}
+                </tbody>
               </table>
+            </div>
+          </div>
+          <div className="w-full flex justify-center">
+            <RegisterDevice />
+          </div>
+          {/* <ChannelTable /> */}
+          <div className="flex w-full justify-center">
+            <div className="div-1 flex flex-col  bg-slate-50 rounded-xl  mt-7 w-[40%]  justify-center items-center shadow-xl overflow-x-auto">
+              <h1 className=" font-bold text-[25px] pl-[50px] justify-center items-center p-5">
+                CHANNEL TABLE
+              </h1>
+              <div className="overflow-auto rounded-[20px] ">
+                <table className="sec-table   rounded-xl justify-center items-center table-fixed">
+                  <tr className="border border-solid border-l-0 border-r-0 p-3 ">
+                    <th className="p-4 text-[18px] font-semibold tracking-wide text-left text-gray-400 px-16 pr-6">
+                      Channel
+                    </th>
+                    <th className="p-4 text-[18px] font-semibold tracking-wide text-left text-gray-400 px-16">
+                      Mode
+                    </th>
+                    <th className="p-4 text-[18px] font-semibold tracking-wide text-left text-gray-400 px-16">
+                      Switch
+                    </th>
+                  </tr>
+                  {channel.map((item) => {
+                    return (
+                      <tr className="border border-solid border-l-0 border-r-0 py-[200px] ">
+                        <td className="table-cell px-16 py-[20px]">
+                          {item.name}
+                        </td>
+                        <td className="table-cell px-16">
+                          {item.mode ? "AD Mode" : "TV Mode"}
+                        </td>
+                        <td className="table-cell px-16">
+                          <button
+                            className="switch hover:shadow-md"
+                            onClick={() => handleChangeMode(item)}
+                          >
+                            Switch
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </table>
+              </div>
             </div>
           </div>
         </div>
