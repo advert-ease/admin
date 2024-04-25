@@ -1,13 +1,23 @@
 const vendorService = require('../services/vendordetails.service');
+
 exports.createVendor = async (req, res) => {
-  try {
+    try {
       const vendorData = req.body;
+      console.log('Received payload:', vendorData);
+  
+      // Check if all other required fields are provided
+      if (!vendorData.vendorName || !vendorData.contactNo || !vendorData.emailId || !vendorData.vendorAddress || !vendorData.city || !vendorData.state || !vendorData.gstNo) {
+        return res.status(400).json({ error: 'All required fields must be provided' });
+      }
+  
       const vendor = await vendorService.createVendor(vendorData);
       res.status(201).json(vendor);
-  } catch (error) {
+    } catch (error) {
       res.status(500).json({ error: error.message });
-  }
-};
+    }
+  };
+  
+
 
 exports.updateVendor = async (req, res) => {
   try {

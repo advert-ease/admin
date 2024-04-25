@@ -37,7 +37,7 @@ const VendorDetails = sequelize.define('VendorDetails', {
   },
   status: {
     type: DataTypes.BOOLEAN,
-    allowNull: false
+    allowNull: true
   },
   creationDate: {
     type: DataTypes.DATE,
@@ -54,6 +54,7 @@ const VendorDetails = sequelize.define('VendorDetails', {
   timestamps: false
 });
 
+VendorDetails.sync();
 module.exports = VendorDetails;
 
-module.exports = VendorDetails
+

@@ -33,7 +33,7 @@ const LocationMaster = sequelize.define('LocationMaster', {
   },
   status: {
     type: DataTypes.BOOLEAN,
-    allowNull: false
+    allowNull: true
   },
   creationDate: {
     type: DataTypes.DATE,
