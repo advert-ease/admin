@@ -1,14 +1,20 @@
 
-// controllers/locationMasterController.js
 const locationMasterService = require('../services/locationmaster.service');
 
 exports.createLocation = async (req, res) => {
   try {
     const locationData = req.body;
+    console.log('Received payload:', locationData); // Log the payload
+    
+    // Check if all other required fields are provided
+    if (!locationData.locationName || !locationData.contactNo || !locationData.locationAddress || !locationData.pincode || !locationData.locGstNo || !locationData.locationType || !locationData.locationEmailId) {
+      return res.status(400).json({ error: 'All required fields must be provided' });
+    }
+    
     const location = await locationMasterService.createLocationmaster(locationData);
     res.status(201).json(location);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
