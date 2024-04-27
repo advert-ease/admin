@@ -118,6 +118,18 @@ export function ItemMaster() {
       // Display confirmation dialog to the user
       const isConfirmed = window.confirm("Are you sure you want to save this?");
       if (isConfirmed) {
+        setItemData({
+          itemCode: "",
+          itemName: "",
+          sku: "",
+          unit: "",
+          quantity: "",
+          purchaseRate: "",
+          purchaseVendor: "",
+          date: "",
+          description: "",
+          currentStock: "",
+        });
         // Make an HTTP POST request to your backend endpoint with all form data
         await axios.post(
           "http://localhost:8000/api/item_master/create",
