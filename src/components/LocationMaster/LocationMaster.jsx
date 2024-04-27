@@ -41,7 +41,17 @@ export function LocationMaster() {
     setIsModalOpen(false);
   };
   const [isModalOpenn, setIsModalOpenn] = useState(false);
-  const showModalUpdate = () => {
+  const showModalUpdate = (location) => {
+    setItemData({
+      locationName: location.locationName,
+      contactNo: location.contactNo,
+      pincode: location.pincode,
+      contactName: location.contactName,
+      locationAddress: location.locationAddress,
+      locGstNo: location.locGstNo,
+      locationType: location.locationType,
+      locationEmailId: location.locationEmailId,
+    });
     setIsModalOpenn(true);
   };
   const handleOkk = () => {
@@ -205,7 +215,7 @@ export function LocationMaster() {
                     id="locationName"
                     placeholder="Enter Location Name"
                     name="locationName"
-                    value={ItemData.locationName}
+                    // value={ItemData.locationName}
                     onChange={handleChange}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
@@ -223,7 +233,7 @@ export function LocationMaster() {
                     id="contactNo"
                     placeholder="Enter Contact Number"
                     name="contactNo"
-                    value={ItemData.contactNo}
+                    // value={ItemData.contactNo}
                     onChange={handleChangeNum}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
@@ -238,12 +248,12 @@ export function LocationMaster() {
                     id="pincode"
                     placeholder="Enter Pincode"
                     name="pincode"
-                    value={ItemData.pincode}
+                    // value={ItemData.pincode}
                     onChange={handleChangeNum}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
                 </div>
-                <div>
+                {/* <div>
                   <label
                     htmlFor="contactName"
                     className="block mb-1 font-semibold"
@@ -260,7 +270,7 @@ export function LocationMaster() {
                     onChange={handleChangeAlp}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
-                </div>
+                </div> */}
                 <div>
                   <label
                     htmlFor="locGstNo"
@@ -274,7 +284,7 @@ export function LocationMaster() {
                     id="locGstNo"
                     placeholder="Enter Location No"
                     name="locGstNo"
-                    value={ItemData.locGstNo}
+                    // value={ItemData.locGstNo}
                     onChange={handleChange}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
@@ -292,7 +302,7 @@ export function LocationMaster() {
                     id="locationType"
                     placeholder="Enter Location Type"
                     name="locationType"
-                    value={ItemData.locationType}
+                    // value={ItemData.locationType}
                     onChange={handleChange}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
@@ -310,7 +320,7 @@ export function LocationMaster() {
                     id="locationEmailId"
                     placeholder="Enter Location Email Id"
                     name="locationEmailId"
-                    value={ItemData.locationEmailId}
+                    // value={ItemData.locationEmailId}
                     onChange={handleChangeAlp}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
@@ -328,7 +338,7 @@ export function LocationMaster() {
                   id="locationAddress"
                   placeholder="Enter Location Address"
                   name="locationAddress"
-                  value={ItemData.locationAddress}
+                  // value={ItemData.locationAddress}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-md px-3 py-2 w-[80vw] bg-[#FFEBD3]"
                 />
@@ -380,11 +390,11 @@ export function LocationMaster() {
                   <td></td> */}
 
                   <td className="px-[3vh]">
-                    <button>
+                    <button onClick={() => showModalUpdate(location)}>
                       <img
                         src="edit-icon.svg"
                         alt=""
-                        onClick={showModalUpdate}
+
                         // className="w-[1.5vw] h-[1.5vh]"
                       />
                     </button>
@@ -426,7 +436,7 @@ export function LocationMaster() {
                             id="contactNumber"
                             placeholder="Enter Contact Number"
                             name="contactNumber"
-                            value={ItemData.contactNumber}
+                            value={ItemData.contactNo}
                             onChange={handleChangeNum}
                             className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                           />
@@ -451,23 +461,60 @@ export function LocationMaster() {
                         </div>
                         <div>
                           <label
-                            htmlFor="contactName"
+                            htmlFor="locGstNo"
                             className="block mb-1 font-semibold"
                           >
-                            Contact Name:
+                            Location GST No:
                             <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
-                            id="contactName"
-                            placeholder="Enter Contact Name"
-                            name="contactName"
-                            value={ItemData.contactName}
-                            onChange={handleChangeNum}
+                            id="locGstNo"
+                            placeholder="Enter Location No"
+                            name="locGstNo"
+                            value={ItemData.locGstNo}
+                            onChange={handleChange}
+                            className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="loactionType"
+                            className="block mb-1 font-semibold"
+                          >
+                            Location Type:
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            id="locationType"
+                            placeholder="Enter Location Type"
+                            name="locationType"
+                            value={ItemData.locationType}
+                            onChange={handleChange}
+                            className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="locationEmailId"
+                            className="block mb-1 font-semibold"
+                          >
+                            Location Email Id:
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            id="locationEmailId"
+                            placeholder="Enter Location Email Id"
+                            name="locationEmailId"
+                            value={ItemData.locationEmailId}
+                            onChange={handleChangeAlp}
                             className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                           />
                         </div>
                       </div>
+
                       <div className=" py-4">
                         <label
                           htmlFor="locationAddress"
