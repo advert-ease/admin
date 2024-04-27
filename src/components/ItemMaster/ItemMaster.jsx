@@ -3,22 +3,24 @@ import TextArea from "antd/es/input/TextArea";
 import { Tooltip } from "antd";
 import { UserAddOutlined } from "@ant-design/icons";
 // import { FolderAddOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Modal } from "antd";
 import axios from "axios";
 
 export function ItemMaster() {
+  const [vendor, setVendor] = useState([]);
   const [ItemData, setItemData] = useState({
     itemCode: "",
     itemName: "",
-    sku: "",
+    skuNo: "",
     unit: "",
     quantity: "",
-    purchaseRate: "",
-    purchaseVendor: "",
-    date: "",
+    purchaseRateItem: "",
+    vendorId: "",
+    purchaseDate: "",
     description: "",
     currentStock: "114",
+    totalPurchaseRate: "0",
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,7 +59,7 @@ export function ItemMaster() {
     const { value } = e.target;
     setItemData({
       ...ItemData,
-      purchaseVendor: value,
+      vendorId: value,
     });
   };
   const handleUnit = (e) => {
@@ -101,34 +103,34 @@ export function ItemMaster() {
       event.preventDefault();
 
       // Check if all mandatory fields are filled
-      if (
-        !ItemData.itemCode ||
-        !ItemData.itemName ||
-        !ItemData.sku ||
-        !ItemData.quantity ||
-        !ItemData.unit ||
-        !ItemData.purchaseRate ||
-        !ItemData.purchaseVendor ||
-        !ItemData.date ||
-        !ItemData.description
-      ) {
-        alert("Please fill in all mandatory fields.");
-        return;
-      }
+      // if (
+      //   !ItemData.itemCode ||
+      //   !ItemData.itemName ||
+      //   !ItemData.skuNo ||
+      //   !ItemData.quantity ||
+      //   !ItemData.unit ||
+      //   !ItemData.purchaseRateItem ||
+      //   !ItemData.purchaseVendor ||
+      //   !ItemData.description
+      // ) {
+      //   alert("Please fill in all mandatory fields.");
+      //   return;
+      // }
       // Display confirmation dialog to the user
       const isConfirmed = window.confirm("Are you sure you want to save this?");
       if (isConfirmed) {
         setItemData({
           itemCode: "",
           itemName: "",
-          sku: "",
+          skuNo: "",
           unit: "",
           quantity: "",
-          purchaseRate: "",
-          purchaseVendor: "",
-          date: "",
+          purchaseRateItem: "",
+          vendorId: "",
+          purchaseDate: "",
           description: "",
-          currentStock: "",
+          currentStock: "114",
+          totalPurchaseRate: "0",
         });
         // Make an HTTP POST request to your backend endpoint with all form data
         await axios.post(
@@ -152,14 +154,17 @@ export function ItemMaster() {
       );
       if (isConfirmed) {
         setItemData({
-          vendorName: "",
-          contactNumber: "",
-          state: "",
-          city: "",
-          gstNo: "",
+          itemCode: "",
+          itemName: "",
+          skuNo: "",
+          unit: "",
+          quantity: "",
+          purchaseRateItem: "",
+          vendorId: "",
+          purchaseDate: "",
           description: "",
-          currentStock: "",
-          date: "",
+          currentStock: "114",
+          totalPurchaseRate: "0",
         });
         // Make an HTTP POST request to your backend endpoint with all form data
         await axios.post(
@@ -174,7 +179,25 @@ export function ItemMaster() {
       alert("Error saving . Please try again.");
     }
   };
+  const fetchData = () => {
+    const apiUrl = "http://localhost:8000/api/vendor_details";
 
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setVendor(data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
     <section className="px-[2vw] py-[4vh] w-[100vw]">
       <div className="  w-full pr-[35vw] bg-white rounded-[30px] px-[4.4vw] py-[2vh] shadow-md  ">
@@ -226,16 +249,16 @@ export function ItemMaster() {
             </Tooltip> */}
 
           <div className="mb-4 ">
-            <label htmlFor="SKU" className="block mb-1 font-semibold">
+            <label htmlFor="skuNo" className="block mb-1 font-semibold">
               SKU:
               <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="sku"
+              id="skuNo"
               placeholder="Enter SKU"
-              name="sku"
-              value={ItemData.sku}
+              name="skuNo"
+              value={ItemData.skuNo}
               onChange={handleChange}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             />
@@ -270,47 +293,51 @@ export function ItemMaster() {
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             >
               <option value="">Choose Unit</option>
-              <option value="u_1">Unit 1</option>
-              <option value="u_2">Unit 2</option>
-              <option value="u_3">Unit 3</option>
+              <option value="kg">kg</option>
+              <option value="g">g</option>
+              <option value="m">m</option>
+              <option value="box">box</option>
+              <option value="pieces">pieces</option>
             </select>
           </div>
 
           <div className="mb-4 ">
-            <label htmlFor="purchaseRate" className="block mb-1 font-semibold">
+            <label
+              htmlFor="purchaseRateItem"
+              className="block mb-1 font-semibold"
+            >
               Purchase Rate:
               <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="purchaseRate"
+              id="purchaseRateItem"
               placeholder="Enter the Rate"
-              name="purchaseRate"
-              value={ItemData.purchaseRate}
+              name="purchaseRateItem"
+              value={ItemData.purchaseRateItem}
               onChange={handleChangeNum}
               className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
             />
           </div>
           <div className=" flex items-center gap-[5px]">
             <div className="mb-4 ">
-              <label
-                htmlFor="purchaseVendor"
-                className="block mb-1 font-semibold"
-              >
+              <label htmlFor="vendorId" className="block mb-1 font-semibold">
                 Purchase Vendor:
                 <span className="text-red-500">*</span>
               </label>
               <select
-                id="purchaseVendor"
-                name="purchaseVendor"
-                value={ItemData.purchaseVendor}
+                id="vendorId"
+                name="vendorId"
+                value={ItemData.vendorId}
                 onChange={handleVendor}
                 className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
               >
-                <option value="">Choose Vendor</option>
-                <option value="v_1">Vendor 1</option>
-                <option value="v_2">Vendor 2</option>
-                <option value="v_3">Vendor 3</option>
+                <option value="">Select vendor</option>
+                {vendor.map((vendor) => (
+                  <option key={vendor.vendorId} value={vendor.vendorId}>
+                    {vendor.vendorName}
+                  </option>
+                ))}
               </select>
             </div>
             <Tooltip title="Add vendor">
@@ -441,7 +468,7 @@ export function ItemMaster() {
             </Tooltip>
           </div>
           <div className="mb-4 ">
-            <label htmlFor="date" className="block mb-1 font-semibold">
+            <label htmlFor="purchaseDate" className="block mb-1 font-semibold">
               {" "}
               Purchase Date:
               <span className="text-red-500">*</span>
@@ -449,9 +476,8 @@ export function ItemMaster() {
             <div className="relative">
               <input
                 type="date"
-                id="date"
-                name="date"
-                value={ItemData.date}
+                id="purchasedate"
+                name="purchasedate"
                 onChange={handleDateChange}
                 className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#F4F1FF]"
               />

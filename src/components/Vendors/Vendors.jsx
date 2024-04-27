@@ -187,6 +187,7 @@ export function Vendors() {
           ItemData
         );
         alert("Location saved successfully");
+        fetchData();
         // Optionally, you can reset the form fields after successful submission
       }
     } catch (error) {
@@ -213,7 +214,7 @@ export function Vendors() {
       alert("Error saving location. Please try again.");
     }
   };
-  useEffect(() => {
+  const fetchData = () => {
     const apiUrl = "http://localhost:8000/api/vendor_details";
 
     fetch(apiUrl)
@@ -227,6 +228,10 @@ export function Vendors() {
         setVendor(data);
       })
       .catch((error) => console.error("Error fetching data:", error));
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
   useEffect(() => {
     console.log(ItemData);
