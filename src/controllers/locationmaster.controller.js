@@ -57,7 +57,7 @@ exports.getLocation = async (req, res) => {
 exports.getlocationById = async (req, res) => {
   try {
       const locationId = req.params.id;
-      const location = await vendorService.getlocationById(locationId);
+      const location = await locationMasterService.getlocationById(locationId);
       if (!location) {
           res.status(404).json({ message: 'location not found' });
           return;

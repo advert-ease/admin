@@ -3,8 +3,6 @@
 const LocationMaster = require('../models/location_master');
 
 
-
-
 exports.createLocationmaster = async (locationData) => {
   try {
       const loc = await LocationMaster.create(locationData);
@@ -41,9 +39,9 @@ exports.getLocation = async () => {
   }
 };
 
-exports.getlocationById = async (vendorId) => {
+exports.getlocationById = async (locationId) => {
   try {
-      const location = await LocationMaster.findByPk(vendorId);
+      const location = await LocationMaster.findByPk(locationId);
       return location;
   } catch (error) {
       throw new Error(error.message);
