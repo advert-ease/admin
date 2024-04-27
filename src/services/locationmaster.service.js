@@ -17,18 +17,18 @@ exports.createLocationmaster = async (locationData) => {
 
 
 
-exports.updateLocation = async (LocationId, updatedlocationData) => {
+exports.updateLocation = async (LocationId, updatedLocationData) => {
   try {
-      const [updatedRowsCount] = await LocationMaster.update(updatedlocationData, {
-          where: { LocationId: LocationId },
-      });
-      if (updatedRowsCount === 0) {
-          throw new Error('location not found or no changes applied.');
-      }
-      const updatedlocation = await LocationMaster.findByPk(LocationId);
-      return updatedlocation;
+    const [updatedRowsCount] = await LocationMaster.update(updatedLocationData, {
+      where: { locationId: LocationId },
+    });
+    if (updatedRowsCount === 0) {
+      throw new Error('Location not found or no changes applied.');
+    }
+    const updatedLocation = await LocationMaster.findByPk(LocationId);
+    return updatedLocation;
   } catch (error) {
-      throw new Error(error.message);
+    throw new Error(error.message);
   }
 };
 

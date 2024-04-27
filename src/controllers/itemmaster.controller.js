@@ -7,12 +7,22 @@ const itemService = require('../services/itemmaster.services');
 
 exports.createItem = async (req, res) => {
   try {
-    const newItem = await itemService.createItem(req.body);
+    const itemData = req.body;
+    console.log('Received payload:', itemData);
+
+    // Check if all required fields are provided
+    const requiredFields = ['itemCode', 'itemName', 'skuNo', 'unit', 'quantity', 'purchaseRateItem', 'totalPurchaseRate', 'vendorId', 'purchaseDate', 'description', 'currentStock'];
+    if (!requiredFields.every(field => itemData[field])) {
+      return res.status(400).json({ error: 'All required fields must be provided' });
+    }
+
+    const newItem = await itemService.createItem(itemData);
     res.status(201).json(newItem);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 
