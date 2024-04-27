@@ -23,6 +23,7 @@ export function LocationMaster() {
     locationName: "",
     contactNo: "",
     contactName: "",
+
     pincode: "",
     locGstNo: "",
     locationAddress: "",
@@ -40,12 +41,36 @@ export function LocationMaster() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  const [updateLoc, setUpdateLoc] = useState({
+    locationName: "",
+    contactNo: "",
+    pincode: "",
+    locationId: "",
+    contactName: "",
+    locationAddress: "",
+    locGstNo: "",
+    locationType: "",
+    locationEmailId: "",
+  });
   const [isModalOpenn, setIsModalOpenn] = useState(false);
   const showModalUpdate = (location) => {
+    console.log(location);
     setItemData({
       locationName: location.locationName,
       contactNo: location.contactNo,
       pincode: location.pincode,
+
+      contactName: location.contactName,
+      locationAddress: location.locationAddress,
+      locGstNo: location.locGstNo,
+      locationType: location.locationType,
+      locationEmailId: location.locationEmailId,
+    });
+    setUpdateLoc({
+      locationName: location.locationName,
+      contactNo: location.contactNo,
+      pincode: location.pincode,
+      locationId: location.locationId,
       contactName: location.contactName,
       locationAddress: location.locationAddress,
       locGstNo: location.locGstNo,
@@ -115,16 +140,18 @@ export function LocationMaster() {
         // Make an HTTP POST request to your backend endpoint with all form data
         await axios.post("http://localhost:8000/api/location/create", ItemData);
         alert("Location saved successfully");
+        fetchLocationData();
+        handleCancel();
         // Optionally, you can reset the form fields after successful submission
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("Error saving location. Please try again.");
+      handleCancel();
     }
   };
   // const [data, setData] = useState(null);
-
-  useEffect(() => {
+  const fetchLocationData = () => {
     const apiUrl = "http://localhost:8000/api/location_details";
 
     fetch(apiUrl)
@@ -138,6 +165,9 @@ export function LocationMaster() {
         setLocations(data); // Assuming data is an array of location objects
       })
       .catch((error) => console.error("Error fetching data:", error));
+  };
+  useEffect(() => {
+    fetchLocationData();
   }, []);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -146,14 +176,18 @@ export function LocationMaster() {
     location.locationName.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const [error, setError] = useState(null);
-  const handlePutRequest = () => {
+  const handlePutRequest = (location) => {
+    console.log(location);
     const requestOptions = {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(ItemData),
     };
 
-    fetch("https://localhost:8000/api/location_details/:id", requestOptions)
+    fetch(
+      `http://localhost:8000/api/location_details/${location.locationId}`,
+      requestOptions
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -163,9 +197,12 @@ export function LocationMaster() {
       .then((data) => {
         // Update local state with updated data
         setItemData(data);
+        fetchLocationData();
+        handleCancell();
       })
       .catch((error) => {
         setError(error);
+        handleCancell();
       });
   };
   return (
@@ -401,7 +438,7 @@ export function LocationMaster() {
                     <Modal
                       title="Edit Location Details"
                       open={isModalOpenn}
-                      onOk={handlePutRequest}
+                      onOk={() => handlePutRequest(updateLoc)}
                       onCancel={handleCancell}
                     >
                       <div className="grid grid-cols-2 gap-5">

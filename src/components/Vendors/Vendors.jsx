@@ -33,6 +33,16 @@ export function Vendors() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenAdd, setIsModalOpenAdd] = useState(false);
   const showModal = (vendor) => {
+    setUpdateVendorId({
+      vendorName: vendor.vendorName,
+      state: vendor.state,
+      city: vendor.city,
+      gstNo: vendor.gstNo,
+      contactNo: vendor.contactNo,
+      emailId: vendor.emailId,
+      vendorAddress: vendor.vendorAddress,
+      vendorId: vendor.vendorId,
+    });
     setItemData(vendor);
     setIsModalOpen(true);
   };
@@ -188,6 +198,7 @@ export function Vendors() {
         );
         alert("Location saved successfully");
         fetchData();
+        handleCancelAdd();
         // Optionally, you can reset the form fields after successful submission
       }
     } catch (error) {
@@ -236,6 +247,48 @@ export function Vendors() {
   useEffect(() => {
     console.log(ItemData);
   }, [ItemData]);
+  const [updateVendorId, setUpdateVendorId] = useState({
+    vendorName: "",
+    state: "",
+    city: "",
+    gstNo: "",
+    contactNo: "",
+    emailId: "",
+    vendorAddress: "",
+    vendorId: "",
+  });
+
+  const [error, setError] = useState(null);
+  const handlePutRequest = (vendor) => {
+    console.log(vendor);
+    const requestOptions = {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(ItemData),
+    };
+
+    fetch(
+      `http://localhost:8000/api/vendor_details/${vendor.vendorId}`,
+      requestOptions
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Update local state with updated data
+        setItemData(data);
+        fetchData();
+        handleCancel();
+      })
+      .catch((error) => {
+        setError(error);
+        handleCancel();
+      });
+  };
+
   const [searchQuery, setSearchQuery] = useState("");
 
   // Filtering function to match vendor names with the search query
@@ -436,7 +489,7 @@ export function Vendors() {
                     <Modal
                       title="Edit Vendor"
                       open={isModalOpen}
-                      onOk={handleSubmit}
+                      onOk={() => handlePutRequest(updateVendorId)}
                       onCancel={handleCancel}
                     >
                       <div className="grid grid-cols-2 gap-5">
