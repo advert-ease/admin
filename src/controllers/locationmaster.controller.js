@@ -22,14 +22,16 @@ exports.createLocation = async (req, res) => {
 
 exports.updateLocation = async (req, res) => {
   try {
-      const LocationId = req.params.id;
-      const updatedlocationData = req.body;
-      const updatedlocation = await locationMasterService.updateLocation(LocationId, updatedlocationData);
-      res.status(200).json(updatedlocation);
+    const LocationId = req.params.id;
+    const updatedLocationData = req.body;
+    console.log('Received payload:', updatedLocationData);
+    const updatedLocation = await locationMasterService.updateLocation(LocationId, updatedLocationData);
+    res.status(200).json(updatedLocation);
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
+
 
 exports.getLocation = async (req, res) => {
   try {
