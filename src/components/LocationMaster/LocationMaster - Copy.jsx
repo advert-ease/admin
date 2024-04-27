@@ -20,14 +20,14 @@ export function LocationMaster() {
   };
 
   const [ItemData, setItemData] = useState({
-    locationName: "",
-    contactNo: "",
-    contactName: "",
-    pincode: "",
-    locGstNo: "",
-    locationAddress: "",
-    locationType: "",
-    locationEmailId: "",
+    locationName: "a",
+    locGstNo: "2",
+    locationEmailId: "a",
+    contactNo: "2",
+    locationType: "a",
+    pincode: "3",
+    contactName: "a",
+    locationAddress: "a",
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,16 +39,6 @@ export function LocationMaster() {
   };
   const handleCancel = () => {
     setIsModalOpen(false);
-  };
-  const [isModalOpenn, setIsModalOpenn] = useState(false);
-  const showModalUpdate = () => {
-    setIsModalOpenn(true);
-  };
-  const handleOkk = () => {
-    setIsModalOpenn(false);
-  };
-  const handleCancell = () => {
-    setIsModalOpenn(false);
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,17 +62,17 @@ export function LocationMaster() {
       });
     }
   };
-  const handleChangeAlp = (e) => {
-    const { name, value } = e.target;
-    // Validate input to accept only alphabetical characters
-    const alphabeticRegex = /^[a-zA-Z\s]*$/;
-    if (alphabeticRegex.test(value)) {
-      setItemData({
-        ...ItemData,
-        [name]: value,
-      });
-    }
-  };
+  // const handleChangeAlp = (e) => {
+  //   const { name, value } = e.target;
+  //   // Validate input to accept only alphabetical characters
+  //   const alphabeticRegex = /^[a-zA-Z\s]*$/;
+  //   if (alphabeticRegex.test(value)) {
+  //     setItemData({
+  //       ...ItemData,
+  //       [name]: value,
+  //     });
+  //   }
+  // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -91,17 +81,19 @@ export function LocationMaster() {
       const isConfirmed = window.confirm(
         "Are you sure you want to save this location?"
       );
+
       if (isConfirmed) {
         setItemData({
-          locationName: "",
-          contactNo: "",
-          contactName: "",
-          pincode: "",
-          locGstNo: "",
-          locationAddress: "",
-          locationType: "",
-          locationEmailId: "",
+          locationName: "a",
+          locGstNo: "2",
+          locationEmailId: "a",
+          contactNo: "2",
+          locationType: "a",
+          pincode: "3",
+          contactName: "a",
+          locationAddress: "a",
         });
+
         // Make an HTTP POST request to your backend endpoint with all form data
         await axios.post("http://localhost:8000/api/location/create", ItemData);
         alert("Location saved successfully");
@@ -132,32 +124,9 @@ export function LocationMaster() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Filtering function to match vendor names with the search query
-  const filteredLocationNames = location.filter((location) =>
-    location.locationName.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredLocationNames = vendorNames.filter((vendor) =>
+    vendor.vendorName.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  const [error, setError] = useState(null);
-  const handlePutRequest = () => {
-    const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(ItemData),
-    };
-
-    fetch("https://localhost:8000/api/location_details/:id", requestOptions)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Update local state with updated data
-        setItemData(data);
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  };
   return (
     <section className="px-[2vw] py-[5vh] w-[100vw] ">
       <div className="bg-white rounded-[30px] w-auto h-auto shadow-xl py-[2vh] px-[4.4vw] overflow-auto">
@@ -212,7 +181,7 @@ export function LocationMaster() {
                 </div>
                 <div>
                   <label
-                    htmlFor="contactNo"
+                    htmlFor="contactNumber"
                     className="block mb-1 font-semibold"
                   >
                     Contact Number:
@@ -220,10 +189,10 @@ export function LocationMaster() {
                   </label>
                   <input
                     type="text"
-                    id="contactNo"
+                    id="contactNumber"
                     placeholder="Enter Contact Number"
-                    name="contactNo"
-                    value={ItemData.contactNo}
+                    name="contactNumber"
+                    value={ItemData.contactNumber}
                     onChange={handleChangeNum}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
@@ -257,61 +226,7 @@ export function LocationMaster() {
                     placeholder="Enter Contact Name"
                     name="contactName"
                     value={ItemData.contactName}
-                    onChange={handleChangeAlp}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="locGstNo"
-                    className="block mb-1 font-semibold"
-                  >
-                    Location GST No:
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="locGstNo"
-                    placeholder="Enter Location No"
-                    name="locGstNo"
-                    value={ItemData.locGstNo}
-                    onChange={handleChange}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="loactionType"
-                    className="block mb-1 font-semibold"
-                  >
-                    Location Type:
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="locationType"
-                    placeholder="Enter Location Type"
-                    name="locationType"
-                    value={ItemData.locationType}
-                    onChange={handleChange}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="locationEmailId"
-                    className="block mb-1 font-semibold"
-                  >
-                    Location Email Id:
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="locationEmailId"
-                    placeholder="Enter Location Email Id"
-                    name="locationEmailId"
-                    value={ItemData.locationEmailId}
-                    onChange={handleChangeAlp}
+                    onChange={handleChangeNum}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
                   />
                 </div>
@@ -367,11 +282,11 @@ export function LocationMaster() {
                     data-name={link.vendorName}
                     className="border border-solid border-l-0 border-r-0 px-[10vw]"
                   > */}
-                  <td className="w-[10vw] p-3">{location.locationName}</td>
-                  <td>{location.contactNo}</td>
-                  <td>{location.pincode}</td>
-                  <td>{location.locationAddress}</td>
-                  <td>{location.status ? "Active" : "Inactive"}</td>
+                  <td className="w-[10vw] p-3">{location.vendorName}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
                   <td></td>
                   {/* <td>{location.Contact_no}</td>
                   <td>{location.Pincode}</td>
@@ -384,108 +299,10 @@ export function LocationMaster() {
                       <img
                         src="edit-icon.svg"
                         alt=""
-                        onClick={showModalUpdate}
+                        onClick={showModal}
                         // className="w-[1.5vw] h-[1.5vh]"
                       />
                     </button>
-                    <Modal
-                      title="Edit Location Details"
-                      open={isModalOpenn}
-                      onOk={handlePutRequest}
-                      onCancel={handleCancell}
-                    >
-                      <div className="grid grid-cols-2 gap-5">
-                        <div>
-                          <label
-                            htmlFor="locationDetails"
-                            className="block mb-1 font-semibold"
-                          >
-                            Location Name:
-                            <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            id="locationName"
-                            placeholder="Enter Location Name"
-                            name="locationName"
-                            value={ItemData.locationName}
-                            onChange={handleChange}
-                            className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
-                          />
-                        </div>
-                        <div>
-                          <label
-                            htmlFor="contactNumber"
-                            className="block mb-1 font-semibold"
-                          >
-                            Contact Number:
-                            <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            id="contactNumber"
-                            placeholder="Enter Contact Number"
-                            name="contactNumber"
-                            value={ItemData.contactNumber}
-                            onChange={handleChangeNum}
-                            className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
-                          />
-                        </div>
-                        <div>
-                          <label
-                            htmlFor="pincode"
-                            className="block mb-1 font-semibold"
-                          >
-                            Pincode:
-                            <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            id="pincode"
-                            placeholder="Enter Pincode"
-                            name="pincode"
-                            value={ItemData.pincode}
-                            onChange={handleChangeNum}
-                            className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
-                          />
-                        </div>
-                        <div>
-                          <label
-                            htmlFor="contactName"
-                            className="block mb-1 font-semibold"
-                          >
-                            Contact Name:
-                            <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            id="contactName"
-                            placeholder="Enter Contact Name"
-                            name="contactName"
-                            value={ItemData.contactName}
-                            onChange={handleChangeNum}
-                            className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#FFEBD3]"
-                          />
-                        </div>
-                      </div>
-                      <div className=" py-4">
-                        <label
-                          htmlFor="locationAddress"
-                          className="block mb-1 font-semibold"
-                        >
-                          Location Address:
-                          <span className="text-red-500">*</span>
-                        </label>
-                        <TextArea
-                          id="locationAddress"
-                          placeholder="Enter Location Address"
-                          name="locationAddress"
-                          value={ItemData.locationAddress}
-                          onChange={handleChange}
-                          className="border border-gray-300 rounded-md px-3 py-2 w-[80vw] bg-[#FFEBD3]"
-                        />
-                      </div>
-                    </Modal>
                   </td>
 
                   <td>
