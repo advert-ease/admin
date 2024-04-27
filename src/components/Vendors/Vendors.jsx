@@ -172,19 +172,20 @@ export function Vendors() {
       );
 
       if (isConfirmed) {
-        const a = {
-          vendorName: ItemData.vendorName,
-
-          state: ItemData.state,
-          city: ItemData.city,
-          gstNo: ItemData.gstNo,
-
-          contactNo: ItemData.contactNo,
-          emailId: ItemData.emailId,
-          vendorAddress: ItemData.vendorAddress,
-        };
+        setItemData({
+          vendorName: "",
+          state: "",
+          city: "",
+          gstNo: "",
+          contactNo: "",
+          emailId: "",
+          vendorAddress: "",
+        });
         // Make an HTTP POST request to your backend endpoint with all form data
-        await axios.post("http://localhost:8000/api/vendor_details/create", a);
+        await axios.post(
+          "http://localhost:8000/api/vendor_details/create",
+          ItemData
+        );
         alert("Location saved successfully");
         // Optionally, you can reset the form fields after successful submission
       }
@@ -197,16 +198,14 @@ export function Vendors() {
     event.preventDefault();
     try {
       // Display confirmation dialog to the user
-      const isConfirmed = window.confirm(
-        "Are you sure you want to save this location?"
-      );
+      const isConfirmed = window.confirm("Are you sure you want to save this");
       if (isConfirmed) {
         // Make an HTTP POST request to your backend endpoint with all form data
         await axios.post(
           "http://localhost:8000/api/vendor_details/create",
           ItemData
         );
-        alert("Location saved successfully");
+        alert("Saved successfully");
         // Optionally, you can reset the form fields after successful submission
       }
     } catch (error) {
@@ -363,7 +362,7 @@ export function Vendors() {
                     id="emailId"
                     placeholder="Enter Email ID"
                     name="emailId"
-                    value={ItemData ? ItemData.gstNo : ""}
+                    value={ItemData ? ItemData.emailId : ""}
                     onChange={handleChangeEmail}
                     className="border border-gray-300 rounded-md px-3 py-2 w-[15vw] bg-[#E6F1FF]"
                   />
@@ -399,7 +398,9 @@ export function Vendors() {
                 <th className="text-[#91B7E5] text-[20px] font-medium text-left p-[3vh]">
                   Contact No
                 </th>
-                <th></th>
+                <th className="text-[#91B7E5] text-[20px] font-medium text-left p-[3vh]">
+                  Status
+                </th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -410,7 +411,7 @@ export function Vendors() {
                 <tr key={vendor.id}>
                   <td className="w-[30vw] p-3">{vendor.vendorName}</td>
                   <td>{vendor.contactNo}</td>
-                  <td></td>
+                  <td>{vendor.status ? "Active" : "Inactive"}</td>
                   <td></td>
                   <td></td>
                   <td></td>
