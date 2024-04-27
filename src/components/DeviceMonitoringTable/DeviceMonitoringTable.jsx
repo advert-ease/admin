@@ -901,6 +901,12 @@ export function DeviceMonitoringTable() {
       return newData;
     });
   };
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtering function to match vendor names with the search query
+  const filteredVendorNames = data.filter((vendor) =>
+    vendor.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <section className="px-[2vw] py-[5vh] w-[100vw] ">
       <div className="w-full bg-white rounded-[30px] px-4 py-4 shadow-xl mt-6">
@@ -910,6 +916,8 @@ export function DeviceMonitoringTable() {
           </h1>
           <div className="py-3">
             <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search here..."
               prefix={<SearchOutlined />}
               className="w-[20vw] h-[5vh]"
@@ -961,7 +969,7 @@ export function DeviceMonitoringTable() {
                       Switch
                     </th>
                   </tr>
-                  {data.map((item, index) => (
+                  {filteredVendorNames.map((item, index) => (
                     <tr
                       key={index}
                       // className={`table-row ${item.pinned ? "pinned" : ""}`}

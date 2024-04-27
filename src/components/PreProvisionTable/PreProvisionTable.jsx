@@ -12,10 +12,10 @@ export function PreProvisionTable() {
     setSelectedItem(preProvTable.find((item) => item.id === e.target.value));
   };
   const preProvTable = [
-    { id: "1", name: "Box", qty: 50 },
-    { id: "2", name: "TV", qty: 20 },
-    { id: "3", name: "Phone", qty: 10 },
-    { id: "4", name: "Tab", qty: 70 },
+    { id: "1", name: "Box", qty: 50, code: "#3452POQ" },
+    { id: "2", name: "TV", qty: 20, code: "#3452ABC" },
+    { id: "3", name: "Phone", qty: 10, code: "#8920HIJK" },
+    { id: "4", name: "Tab", qty: 70, code: "#3452EFG" },
   ];
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,9 +49,14 @@ export function PreProvisionTable() {
     return (
       <div>
         <h3 className="mb-[1vh]">
-          <span className="font-extrabold">Selected :</span>
+          <span className="font-extrabold">Total Inventory :</span>
           {` ${qty} ${name}`}
         </h3>
+        <h3 className="mb-[1vh]">
+          <span className="font-extrabold">Pre Provisioned :</span>
+          {` ${qty} ${name}`}
+        </h3>
+
         {[...Array(qty)].map((_, index) => (
           <div className="flex mb-[5vh] gap-[2vw]">
             <div className="flex">
@@ -91,6 +96,20 @@ export function PreProvisionTable() {
       </div>
     );
   }
+  function RenderBasedSelect({ qty, name }) {
+    return (
+      <div>
+        <h3 className="mb-[1vh]">
+          <span className="font-extrabold">Total Inventory :</span>
+          {` ${qty} ${name}`}
+        </h3>
+        <h3 className="mb-[1vh]">
+          <span className="font-extrabold">Pre Provisioned :</span>
+          {` ${qty} ${name}`}
+        </h3>
+      </div>
+    );
+  }
   return (
     <section className="px-[2vw] py-[5vh] w-[100vw] ">
       <div className="bg-white rounded-[30px] w-auto h-auto shadow-xl py-[2vh] px-[4.4vw]">
@@ -119,10 +138,16 @@ export function PreProvisionTable() {
             >
               {preProvTable.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.qty} {item.name}
+                  {item.code}- {item.name}
                 </option>
               ))}
             </select>
+            {selectedItem && (
+              <RenderBasedSelect
+                qty={selectedItem.qty}
+                name={selectedItem.name}
+              />
+            )}
           </div>
           {selectedItem && (
             <RenderBasedOnQuantity
